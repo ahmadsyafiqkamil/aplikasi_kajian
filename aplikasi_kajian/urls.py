@@ -20,7 +20,9 @@ from django.conf import settings
 
 urlpatterns = [
                   path('admin/', admin.site.urls),
-                  path('', include('kajian.urls'))
+                  path('', include('kajian.urls')),
+                  path('', include('django.contrib.auth.urls')),
+
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

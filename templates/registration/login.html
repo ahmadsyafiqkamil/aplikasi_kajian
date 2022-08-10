@@ -1,0 +1,118 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.png' %}">
+
+    <title>DashForge Responsive Bootstrap 4 Dashboard Template</title>
+
+    <!-- vendor css -->
+    <link href="{% static 'lib/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
+
+    <!-- DashForge CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/dashforge.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/dashforge.auth.css' %}">
+</head>
+<body>
+
+
+<div class="content content-fixed content-auth">
+    <div class="container">
+        <div class="media align-items-stretch justify-content-center ht-100p pos-relative">
+            <div class="media-body align-items-center d-none d-lg-flex">
+                <div class="mx-wd-600">
+                    <img src="https://via.placeholder.com/1260x950" class="img-fluid" alt="">
+                </div>
+
+            </div><!-- media-body -->
+            <div class="sign-wrapper mg-lg-l-50 mg-xl-l-60">
+                {% if form.errors %}
+                    <p>Your username and password didn't match. Please try again.</p>
+                {% endif %}
+
+                {% if next %}
+                    {% if user.is_authenticated %}
+                        <p>Your account doesn't have access to this page. To proceed,
+                            please login with an account that has access.</p>
+                    {% else %}
+                        <p>Please login to see this page.</p>
+                    {% endif %}
+                {% endif %}
+                <div class="wd-100p">
+                    <form method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <h3 class="tx-color-01 mg-b-5">Sign In</h3>
+                        <p class="tx-color-03 tx-16 mg-b-40">Welcome back! Please signin to continue.</p>
+
+                        <div class="form-group">
+                            <label>{{ form.username.label_tag }}</label>
+                            <input type="text" class="form-control" placeholder="username" name="username" autofocus=""
+                                   autocapitalize="none" autocomplete="username" maxlength="150" required=""
+                                   id="id_username">
+                        </div>
+                        <div class="form-group">
+                            <div class="d-flex justify-content-between mg-b-5">
+                                <label>{{ form.password.label_tag }}</label>
+                                <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+                            </div>
+                            <input type="password" class="form-control" placeholder="Enter your password"
+                                   name="password" autocomplete="current-password" required="" id="id_password">
+                        </div>
+                        <button class="btn btn-brand-02 btn-block">Sign In</button>
+                    </form>
+                </div>
+            </div><!-- sign-wrapper -->
+        </div><!-- media -->
+    </div><!-- container -->
+</div><!-- content -->
+
+<footer class="footer">
+    <div>
+        <span>&copy; 2019 DashForge v1.0.0. </span>
+        <span>Created by <a href="http://themepixels.me">ThemePixels</a></span>
+    </div>
+    <div>
+        <nav class="nav">
+            <a href="#" class="nav-link">Licenses</a>
+            <a href="#" class="nav-link">Change Log</a>
+            <a href="#" class="nav-link">Get Help</a>
+        </nav>
+    </div>
+</footer>
+
+<script src="{% static 'lib/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'lib/feather-icons/feather.min.js' %}"></script>
+<script src="{% static 'lib/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>
+
+<script src="{% static 'assets/js/dashforge.js' %}"></script>
+
+<!-- append theme customizer -->
+<script src="{% static 'lib/js-cookie/js.cookie.js' %}"></script>
+<script src="{% static 'assets/js/dashforge.settings.js' %}"></script>
+<script>
+    $(function () {
+        'use script'
+
+        window.darkMode = function () {
+            $('.btn-white').addClass('btn-dark').removeClass('btn-white');
+        }
+
+        window.lightMode = function () {
+            $('.btn-dark').addClass('btn-white').removeClass('btn-dark');
+        }
+
+        var hasMode = Cookies.get('df-mode');
+        if (hasMode === 'dark') {
+            darkMode();
+        } else {
+            lightMode();
+        }
+    })
+</script>
+</body>
+</html>
