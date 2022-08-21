@@ -1,22 +1,23 @@
-from django.contrib.auth.forms import AuthenticationForm
+from django.forms import ModelForm, TextInput
+from .models import Kajian
+from django.utils.translation import gettext_lazy as _
 
 
-class CustomLoginForm(AuthenticationForm):
+class KajianForm(ModelForm):
+    class Meta:
+        model = Kajian
+        fields = ('nama_kajian',)
+        labels = {
+            'nama_kajian': _('Nama Kajian'),
+        }
+        widgets = {
+            'nama_kajian': TextInput(attrs={'class': 'form-control', }),
+        }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['username'].widget.attrs.update(
-            {
-                'class': 'form-control',
-                'type': 'text',
-                'placeholder': 'username',
-            }
-        )
-
-        self.fields['password'].widget.attrs.update(
-            {
-                'class': 'form-control',
-                'type': 'password',
-                'placeholder': 'Enter your password',
-            }
-        )
+    # def __init__(self, *args, **kwargs):
+    # super().__init__(*args, **kwargs)
+    # user = kwargs.pop('user')
+    # self.logged_user = user
+    # self.fields['nama_kajian'].widget.attrs.update({
+    #     'class': 'form-control'
+    # })
