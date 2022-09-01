@@ -38,25 +38,14 @@ class KajianView(LoginRequiredMixin, generic.FormView):
         return super(KajianView, self).form_valid(form)
 
 
-class KajianListView(generic.ListView,AjaxDatatableView):
+class KajianListView(generic.TemplateView):
     model = Kajian
     template_name = 'content/kajian_list.html'
-    title = 'Daftar Kajian'
-    initial_order = [["app_label", "asc"], ]
-    length_menu = [[10, 20, 50, 100, -1], [10, 20, 50, 100, 'all']]
-    search_values_separator = '+'
 
-    column_defs = [
-        AjaxDatatableView.render_row_tools_column_def(),
-        {'name': 'id', 'visible': False, },
-        {'name': 'nama_kajian', 'visible': True, },
-        {'name': 'pj_kajian', 'visible': True, },
-        # {'name': 'app_label', 'foreign_field': 'content_type__app_label', 'visible': True, },
-        # {'name': 'model', 'foreign_field': 'content_type__model', 'visible': True, },
-    ]
 
-    def get_queryset(self):
-        return Kajian.objects.filter(created_by=self.request.user)
+    # def get_queryset(self):
+    #     return Kajian.objects.filter(created_by=self.request.user)
+
 
 # class KajianView(generic.TemplateView):
 #     template_name = 'content/kajian.html'
@@ -75,20 +64,18 @@ class KajianListView(generic.ListView,AjaxDatatableView):
 #         return self.render_to_response({'form': formset})
 
 
-
-class PermissionAjaxDatatableView(AjaxDatatableView):
-
-    model = Permission
-    title = 'Permissions'
-    initial_order = [["app_label", "asc"], ]
+class KajianAjaxView(AjaxDatatableView):
+    model = Kajian
+    title = 'Daftar Kajian'
+    initial_order = [["nama_kajian", "asc"], ]
     length_menu = [[10, 20, 50, 100, -1], [10, 20, 50, 100, 'all']]
     search_values_separator = '+'
 
     column_defs = [
         AjaxDatatableView.render_row_tools_column_def(),
         {'name': 'id', 'visible': False, },
-        {'name': 'codename', 'visible': True, },
-        {'name': 'name', 'visible': True, },
-        {'name': 'app_label', 'foreign_field': 'content_type__app_label', 'visible': True, },
-        {'name': 'model', 'foreign_field': 'content_type__model', 'visible': True, },
+        {'name': 'nama_kajian', 'visible': True, },
+        {'name': 'pj_kajian', 'visible': True, },
+        # {'name': 'app_label', 'foreign_field': 'content_type__app_label', 'visible': True, },
+        # {'name': 'model', 'foreign_field': 'content_type__model', 'visible': True, },
     ]
