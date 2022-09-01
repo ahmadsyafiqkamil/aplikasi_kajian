@@ -37,11 +37,17 @@
 
     <!-- vendor css -->
     <link href="{% static 'lib/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
-    <link href="{% static  'lib/ionicons/css/ionicons.min.css" rel="stylesheet' %}">
-
+    <link href="{% static  'lib/ionicons/css/ionicons-core.min.css" '%}"  rel="stylesheet">
+    <link href="{% static '/lib/typicons.font/typicons.css'%}" rel="stylesheet">
+    <link href="{% static 'lib/prismjs/themes/prism-vs.css' %}" rel="stylesheet">
+    {% block css %}{% endblock %}
     <!-- DashForge CSS -->
-    <link rel="stylesheet" href="{% static 'assets/css/dashforge.css' %}">
+    <link rel=" stylesheet
+    " href="{% static 'assets/css/dashforge.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/dashforge.demo.css' %}">
+
+
+
 
 </head>
 <body>
@@ -63,7 +69,7 @@
         {% if user.is_authenticated %}
             <label>{{ user.username }} - {{ user.profile.satker }}</label>
 
-            <a href="{% url 'logout' %}?next={{ request.path }}" class="btn btn-buy"><i
+            <a href="{% url 'logout' %}?next=/" class="btn btn-buy"><i
                     data-feather="log-out"></i> <span>Logout</span></a>
         {% else %}
             <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-buy"><i
@@ -87,11 +93,7 @@
 <script src="{% static 'lib/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>
 
 <script src="{% static 'assets/js/dashforge.js' %}"></script>
-<script>
-    $(function () {
-        'use strict'
 
-    });
-</script>
+{% block js %}{% endblock %}
 </body>
 </html>
