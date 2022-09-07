@@ -19,7 +19,6 @@ class KajianAjaxView(AjaxDatatableView):
         {'name': 'abstrak', 'visible': True, 'title': 'Abstrak'},
         {'name': 'anggota', 'visible': True, 'title': 'Anggota Kajian', 'm2m_foreign_field': 'anggota__username'},
         {'name': 'edit', 'title': 'Edit', 'searchable': False, 'orderable': False, },
-        # {'name': 'model', 'foreign_field': 'content_type__model', 'visible': True, },
     ]
 
     def customize_row(self, row, obj):
