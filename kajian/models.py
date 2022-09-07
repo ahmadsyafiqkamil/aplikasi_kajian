@@ -1,14 +1,72 @@
-from django.db import models
-from django.urls import reverse
+import uuid
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.text import slugify
+from django.db import models
+from django.urls import reverse
+from django.utils import timezone
+from django.conf import settings
+from django.utils.translation import gettext_lazy as _
+from ajax_datatable.utils import format_datetime
+from .validator import validate_file_extension
 
 
-# Create your models here.
+class BaseModel(models.Model):
+    """
+    Base class for all models;
+    defines common metadata
+    """
 
-class Profile(models.Model):
+    class Meta:
+        abstract = True
+        ordering = ('-created',)  # better choice for UI
+        get_latest_by = "-created"
+
+    # Primary key
+    id = models.UUIDField('id', default=uuid.uuid4, primary_key=True, unique=True,
+                          null=False, blank=False, editable=False)
+    name = models.CharField(null=False, blank=False, max_length=256)
+    url = models.CharField(null=False, blank=True, max_length=256)
+
+    # metadata
+    created = models.DateTimeField(_('created'), null=True, blank=True, )
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_(
+        'created by'), null=True, blank=True, related_name='+', on_delete=models.SET_NULL)
+    updated = models.DateTimeField(_('updated'), null=True, blank=True, )
+    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_(
+        'updated by'), null=True, blank=True, related_name='+', on_delete=models.SET_NULL)
+
+    # def __str__(self):
+    #     return str(self.name)
+
+    def get_admin_url(self):
+        return reverse("admin:%s_%s_change" %
+                       (self._meta.app_label, self._meta.model_name), args=(self.id,))
+
+    def get_absolute_url(self):
+        return self.get_admin_url()
+
+    def created_display(self):
+        return format_datetime(self.created)
+
+    created_display.short_description = _('Created')
+    created_display.admin_order_field = 'created'
+
+    def updated_display(self):
+        return format_datetime(self.updated)
+
+    updated_display.short_description = _('Updated')
+    updated_display.admin_order_field = 'updated'
+
+    def save(self, *args, **kwargs):
+        today = timezone.now()
+        if self.created is None:
+            self.created = today
+        self.updated = today
+        return super(BaseModel, self).save(*args, **kwargs)
+
+
+class Profile(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     satker = models.CharField(max_length=100)
 
@@ -27,52 +85,33 @@ def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
 
-class Kajian(models.Model):
-    # slug = models.SlugField(unique=True)
-    nama_kajian = models.CharField(
-        max_length=100,
-        verbose_name='Name Kajian'
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pengisi_kajian')
+class Kajian(BaseModel):
+    # nama_kajian = models.CharField(max_length=100, verbose_name='Name Kajian')
     pj_kajian = models.ForeignKey(User, on_delete=models.CASCADE, related_name='penanggung_jawab_kajian')
-    anggota = models.ManyToManyField(User,related_name='anggota_kajian',)
-
-    def __str__(self):
-        return self.nama_kajian
-
-    # def save(self, *args, **kwargs):
-    #     self.slug = slugify(self.nama_kajian)
-    #     super(Kajian, self).save(*args, **kwargs)
-
-    class Meta:  # new
-        indexes = [models.Index(fields=["nama_kajian"])]
-        ordering = ["-nama_kajian"]
-        verbose_name = "kajian"
-
-    def get_absolute_url(self):  # new
-        return reverse("detil_kajian", args=[str(self.id)])
-
-
-# class KajianAnggota(models.Model):
-#     kajian = models.ForeignKey(Kajian,on_delete=models.CASCADE, related_name='id_kajian')
-#     anggota = models.ForeignKey(User,on_delete=models.CASCADE,related_name='anggota_kajian')
-
-class ProgresKajian(models.Model):
-    kajian = models.ForeignKey('Kajian', on_delete=models.CASCADE)
-    progres = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.progres
+    anggota = models.ManyToManyField(User, related_name='anggota_kajian', through='AnggotaKajian',
+                                     through_fields=('kajian', 'anggota'), )
+    uraian_singkat = models.CharField(max_length=150, verbose_name='Uraian Singkat', null=True, blank=True)
+    abstrak = models.TextField(null=True, blank=True)
+    models.FileField(upload_to='document/%Y-%m-%d/', validators=[validate_file_extension], null=True, blank=True)
 
     class Meta:
-        indexes = [models.Index(fields=['kajian'])]
-        ordering = ["-kajian"]
-        verbose_name = "Progres Kajian"
+        db_table = "tbl_kajian"
 
-    def get_absolute_url(self):  # new
-        return reverse("detil_progress", args=[str(self.id)])
+
+class AnggotaKajian(models.Model):
+    kajian = models.ForeignKey(Kajian, on_delete=models.CASCADE)
+    anggota = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "tbl_anggota_kajian"
+
+    # def __str__(self):
+    #     return str(self.kajian.pk)
+
+
+class ProgresKajian(BaseModel):
+    kajian = models.ForeignKey('Kajian', on_delete=models.CASCADE)
+    progres = models.TextField()
+
+    class Meta:
+        db_table = "tbl_progress_kajian"

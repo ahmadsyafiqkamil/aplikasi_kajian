@@ -83,7 +83,7 @@ DATABASES = {
         'NAME': 'kajian',
         'USER': 'root',
         'PASSWORD': '',
-        'HOST': 'localhost',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }
@@ -134,7 +134,13 @@ STATICFILES_DIRS = [BASE_DIR / "static", ]
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'uploads'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # LOGIN_REDIRECT_URL = '/kajian'
 LOGIN_REDIRECT_URL = '/kajian_list/'
+
+# ajax-datatable
+
+AJAX_DATATABLE_TRACE_COLUMNDEFS = True
+AJAX_DATATABLE_TRACE_QUERYDICT = True
+AJAX_DATATABLE_TEST_FILTERS = True

@@ -19,16 +19,20 @@ from django.forms import modelformset_factory
 class KajianForm(forms.ModelForm):
     class Meta:
         model = Kajian
-        fields = ('nama_kajian', 'pj_kajian', 'anggota')
+        fields = ('name', 'pj_kajian', 'anggota', 'uraian_singkat', 'abstrak')
         labels = {
-            'nama_kajian': _('Nama Kajian'),
+            'name': _('Nama Kajian'),
             'pj_kajian': _('Penanggung Jawab'),
             'anggota': _('Nama Anggota'),
+            'uraian_singkat': _('Uraian Singkat Kajian'),
+            'abstrak': _('Abstrak'),
         }
         widgets = {
-            'nama_kajian': forms.TextInput(attrs={'class': 'form-control', }),
+            'name': forms.TextInput(attrs={'class': 'form-control', }),
             'pj_kajian': forms.Select(attrs={'class': 'form-control select2', }),
             'anggota': forms.SelectMultiple(attrs={'class': 'form-control select2', 'multiple': 'multiple'}),
+            'uraian_singkat': forms.TextInput(attrs={'class': 'form-control', }),
+            'abstrak': forms.Textarea(attrs={'class': 'form-control', }),
         }
 
     # def __init__(self, *args, **kwargs):

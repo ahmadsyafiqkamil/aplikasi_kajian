@@ -37,16 +37,15 @@
 
     <!-- vendor css -->
     <link href="{% static 'lib/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
-    <link href="{% static  'lib/ionicons/css/ionicons-core.min.css" '%}"  rel="stylesheet">
-    <link href="{% static '/lib/typicons.font/typicons.css'%}" rel="stylesheet">
-    <link href="{% static 'lib/prismjs/themes/prism-vs.css' %}" rel="stylesheet">
+    <link href="{% static '/lib/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
+    <link href="{% static '/lib/typicons.font/typicons.css' %}" rel="stylesheet">
+    <link href="{% static '/lib/prismjs/themes/prism-vs.css' %}" rel="stylesheet">
+
+
     {% block css %}{% endblock %}
     <!-- DashForge CSS -->
-    <link rel=" stylesheet
-    " href="{% static 'assets/css/dashforge.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/dashforge.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/dashforge.demo.css' %}">
-
-
 
 
 </head>
@@ -91,8 +90,10 @@
 <script src="{% static 'lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <script src="{% static 'lib/feather-icons/feather.min.js' %}"></script>
 <script src="{% static 'lib/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>
+<script src="{% static 'lib/feather-icons/feather.min.js' %}"></script>
 
 <script src="{% static 'assets/js/dashforge.js' %}"></script>
+
 
 {% block js %}{% endblock %}
 </body>
