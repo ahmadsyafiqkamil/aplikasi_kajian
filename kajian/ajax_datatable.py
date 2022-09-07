@@ -35,24 +35,4 @@ class KajianAjaxView(AjaxDatatableView):
         qs = self.model.objects.filter(created_by=self.request.user)
         return qs
 
-    # def prepare_results(self, request, qs):
-    #     data = []
-    #     for i in qs:
-    #         anggota = []
-    #         for a in i.anggota.all():
-    #             anggota.append(a.User.name)
-    #         anggota = " ".join(anggota)
-    #         data.append([
-    #             i.id,
-    #             i.name,
-    #             i.url,
-    #             i.created,
-    #             i.created_by,
-    #             i.updated,
-    #             i.updated_by,
-    #             i.pj_kajian,
-    #             i.uraian_singkat,
-    #             i.abstrak,
-    #             anggota
-    #         ])
-    #     return data
+
