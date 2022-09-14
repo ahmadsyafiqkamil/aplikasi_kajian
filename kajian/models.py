@@ -92,7 +92,7 @@ class Kajian(BaseModel):
                                      through_fields=('kajian', 'anggota'), )
     uraian_singkat = models.CharField(max_length=150, verbose_name='Uraian Singkat', null=True, blank=True)
     abstrak = models.TextField(null=True, blank=True)
-    models.FileField(upload_to='document/%Y-%m-%d/', validators=[validate_file_extension], null=True, blank=True)
+    file = models.FileField(upload_to='document/%Y-%m-%d/', validators=[validate_file_extension], null=True, blank=True)
 
     class Meta:
         db_table = "tbl_kajian"

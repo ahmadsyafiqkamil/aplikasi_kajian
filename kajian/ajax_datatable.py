@@ -1,38 +1,53 @@
 from ajax_datatable.views import AjaxDatatableView
 from django.core.exceptions import PermissionDenied
+from django.utils.translation import gettext_lazy as _
 
 from .models import Kajian
 
 
 class KajianAjaxView(AjaxDatatableView):
     model = Kajian
+    code = 'kajian'
     title = 'Daftar Kajian'
     initial_order = [["name", "asc"], ]
     length_menu = [[10, 20, 50, 100, -1], [10, 20, 50, 100, 'all']]
     search_values_separator = '+'
     column_defs = [
-        # AjaxDatatableView.render_row_tools_column_def(),
+        # AjaxDatatableView.render_row_tools_coValueError: The 'file' attribute has no file associated with it.lumn_def(),
         {'name': 'id', 'visible': False},
         {'name': 'name', 'visible': True, 'title': "Nama Kajian"},
         {'name': 'pj_kajian', 'visible': True, 'title': 'Penanggung Jawab Kajian'},
         {'name': 'uraian_singkat', 'visible': True, 'title': 'Uraian Singkat'},
         {'name': 'abstrak', 'visible': True, 'title': 'Abstrak'},
         {'name': 'anggota', 'visible': True, 'title': 'Anggota Kajian', 'm2m_foreign_field': 'anggota__username'},
-        {'name': 'edit', 'title': 'Edit', 'searchable': False, 'orderable': False, },
+        {'name': 'file', 'visible': True, 'title': 'Dokumen', },
+        # {'name': 'document', 'visible': True, 'title': 'Dokumen', },
+        {'name': 'action', 'title': 'Aksi', 'searchable': False, 'orderable': False, },
     ]
 
     def customize_row(self, row, obj):
-        row['edit'] = """
-            <a href="#" class="btn btn-info btn-edit"
-               onclick="var id=this.closest('tr').id.substr(4); alert('Edit Kajian: ' + id); return false;">
-               Edit
-            </a>
-        """
+        file = self.model.objects.get(id=row["pk"])
+        # print(file1.file.path)
+        if file.file:
+            path_file = file.file.url
+        else:
+            path_file = "#"
+        row['file'] = """
+        <a href="%s">file</a>
+        """ % path_file
+        row['action'] = """
+                    <a href="#" class="btn btn-info btn-edit" id="edit"
+                    onclick="edit(this.closest('tr').id.substr(4)); " >
+                       Edit
+                    </a>
+                    <a href="#" class="btn btn-danger" id="delete"
+                            onclick="delete_data(this.closest('tr').id.substr(4)); " >
+                               Delete
+                            </a>
+                """
 
     def get_initial_queryset(self, request=None):
         if not request.user.is_authenticated:
             raise PermissionDenied
         qs = self.model.objects.filter(created_by=self.request.user)
         return qs
-
-

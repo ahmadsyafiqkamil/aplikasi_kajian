@@ -1,6 +1,7 @@
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import KajianForm
+from .models import Kajian
 
 
 class HomeView(LoginRequiredMixin, generic.TemplateView):
@@ -29,8 +30,22 @@ class KajianView(LoginRequiredMixin, generic.FormView):
         return super(KajianView, self).form_valid(form)
 
 
-class KajianListView(generic.TemplateView):
+class KajianListView(LoginRequiredMixin, generic.TemplateView):
     template_name = 'content/kajian_list.html'
 
     # def get_queryset(self):
     #     return Kajian.objects.filter(created_by=self.request.user)
+
+
+class KajianEditView(LoginRequiredMixin, generic.edit.UpdateView):
+    model = Kajian
+    template_name = 'content/kajian.html'
+    form_class = KajianForm
+    success_url = '/kajian_list/'
+
+    def form_valid(self, form):
+        kajian = form.save(commit=False)
+        kajian.created_by = self.request.user
+        kajian.save()
+        form.save_m2m()
+        return super(KajianEditView, self).form_valid(form)
