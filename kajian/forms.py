@@ -2,6 +2,7 @@
 from django import forms
 from .models import Kajian
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import User
 from django.forms import modelformset_factory
 
 
@@ -25,3 +26,8 @@ class KajianForm(forms.ModelForm):
             'abstrak': forms.Textarea(attrs={'class': 'form-control', }),
             'file': forms.FileInput(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super(KajianForm, self).__init__(*args, **kwargs)
+        self.fields['pj_kajian'].queryset = User.objects.exclude(username="admin")
+        self.fields['anggota'].queryset = User.objects.exclude(username="admin")

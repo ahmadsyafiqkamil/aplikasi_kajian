@@ -27,7 +27,7 @@ class KajianAjaxView(AjaxDatatableView):
 
     def customize_row(self, row, obj):
         file = self.model.objects.get(id=row["pk"])
-        # print(file1.file.path)
+        print(row["pk"])
         if file.file:
             path_file = file.file.url
         else:
@@ -35,15 +35,17 @@ class KajianAjaxView(AjaxDatatableView):
         row['file'] = """
         <a href="%s">file</a>
         """ % path_file
-        row['action'] = """
+        row['action'] = f"""
                     <a href="#" class="btn btn-info btn-edit" id="edit"
-                    onclick="edit(this.closest('tr').id.substr(4)); " >
+                    onclick="edit('{row['pk']}'); " >
                        Edit
                     </a>
-                    <a href="#" class="btn btn-danger" id="delete"
-                            onclick="delete_data(this.closest('tr').id.substr(4)); " >
-                               Delete
-                            </a>
+                    <a href="/kajian_delete/{row['pk']}" class="btn btn-danger" data-toggle="modal"
+                    data-target="#delete-item-modal"
+                    id="delete-item"
+                    >
+                    Delete
+                    </a>
                 """
 
     def get_initial_queryset(self, request=None):

@@ -17,7 +17,8 @@
     <div class="container">
 
         <h1>Daftar Kajian</h1>
-        <a href='{% url "kajian:kajian" %}'>Tambah Kajian</a>
+        <a href='{% url "kajian:kajian" %}' class="btn btn-info btn-info">Tambah Kajian</a>
+        <br>
         {#        {% for kajian in object_list %}#}
         {#            <p>{{ kajian.nama_kajian }}</p>#}
         {#        {% endfor %}#}
@@ -42,6 +43,24 @@
 
     </div><!-- container -->
 
+    <div class="modal fade" id="delete-item-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Are you sure, You want to remove this item?</p>
+                </div>
+                <div class="justify-content-between mb-2 mr-2 text-right">
+                    <form method="post"
+                          id="item-delete-form"
+                    >
+                        <button type="button" class="btn btn-secondary mr-1" data-dismiss="modal">Cancel</button>
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger" id="confirm-delete-item-button">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block js %}
@@ -74,12 +93,13 @@
 
         function edit(clicked_id) {
             console.log(clicked_id)
-            location.href = "/kajian_edit/"+clicked_id;
+            location.href = "/kajian_edit/" + clicked_id;
         }
 
-        function delete_data(clicked_id) {
-            console.log(clicked_id)
-        }
+        $(document).on('click', '#delete-item', () => {
+            document.getElementById("item-delete-form").action = document.querySelector('#delete-item').href
+        });
+
     </script>
 
 {% endblock %}

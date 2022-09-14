@@ -1,3 +1,4 @@
+from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import KajianForm
@@ -49,3 +50,8 @@ class KajianEditView(LoginRequiredMixin, generic.edit.UpdateView):
         kajian.save()
         form.save_m2m()
         return super(KajianEditView, self).form_valid(form)
+
+
+class KajianDeleteView(LoginRequiredMixin, generic.edit.DeleteView):
+    success_url = reverse_lazy("kajian:kajian_list")
+    model = Kajian
