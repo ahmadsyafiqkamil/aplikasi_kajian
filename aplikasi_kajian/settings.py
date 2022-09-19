@@ -80,11 +80,11 @@ DATABASES = {
         # 'ENGINE': 'django.db.sqlite3.backends.sqlite3',
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'kajian',
+        'NAME': 'db_kajian',
         'USER': 'root',
-        'PASSWORD': '',
         'HOST': '127.0.0.1',
         'PORT': '3306',
+        # 'PASSWORD': 'root'
     }
 }
 

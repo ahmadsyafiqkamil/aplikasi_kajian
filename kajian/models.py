@@ -36,8 +36,8 @@ class BaseModel(models.Model):
     updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_(
         'updated by'), null=True, blank=True, related_name='+', on_delete=models.SET_NULL)
 
-    # def __str__(self):
-    #     return str(self.name)
+    def __str__(self):
+        return str(self.name)
 
     def get_admin_url(self):
         return reverse("admin:%s_%s_change" %
@@ -93,6 +93,7 @@ class Kajian(BaseModel):
     uraian_singkat = models.CharField(max_length=150, verbose_name='Uraian Singkat', null=True, blank=True)
     abstrak = models.TextField(null=True, blank=True)
     file = models.FileField(upload_to='document/%Y-%m-%d/', validators=[validate_file_extension], null=True, blank=True)
+    # status = models.IntegerChoices()
 
     class Meta:
         db_table = "tbl_kajian"

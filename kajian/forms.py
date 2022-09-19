@@ -1,6 +1,6 @@
 # from django.forms import ModelForm, TextInput
 from django import forms
-from .models import Kajian
+from .models import Kajian, ProgresKajian
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from django.forms import modelformset_factory
@@ -31,3 +31,22 @@ class KajianForm(forms.ModelForm):
         super(KajianForm, self).__init__(*args, **kwargs)
         self.fields['pj_kajian'].queryset = User.objects.exclude(username="admin")
         self.fields['anggota'].queryset = User.objects.exclude(username="admin")
+
+
+class ProgresKajianForm(forms.ModelForm):
+    class Meta:
+        model = ProgresKajian
+        fields = ('name', 'progres')
+        labels = {
+            'name': _('Progres'),
+            # 'kajian': _('Nama Kajian'),
+            'progres': _('Progres'),
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', }),
+            # 'kajian': forms.Select(attrs={'class': 'form-control select2', }),
+            'progres': forms.Textarea(attrs={'class': 'form-control', }),
+        }
+    # def __init__(self, *args, **kwargs):
+    #     super(ProgresKajianForm, self).__init__(*args, **kwargs)
+    #     self.fields['kajian'].queryset = User.objects.get(id = "")

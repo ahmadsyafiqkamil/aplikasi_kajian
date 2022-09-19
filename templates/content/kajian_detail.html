@@ -1,0 +1,94 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block css %}
+    <link href="{% static 'lib/datatables.net-dt/css/jquery.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/datatables.net-responsive-dt/css/responsive.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/select2/css/select2.min.css' %}" rel="stylesheet">
+    <link href="{% static 'ajax_datatable/css/style.css' %}" rel="stylesheet"/>
+    <link href="{% static 'lib/datatables.net-dt/css/jquery.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/datatables.net-responsive-dt/css/responsive.dataTables.min.css' %}" rel="stylesheet">
+{% endblock %}
+{% block navbar-menu-header %}
+    <ul class="nav navbar-menu">
+
+    </ul>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1 class="df-title">Detail Kajian {{ object.name }}</h1>
+        <a href="{% url 'kajian:kajian_tambah_progres' object.id %}">Tambah Progres Kajian</a>
+        <div class="row">
+            <table class="table table-striped table-hover table-primary">
+                <tbody>
+
+                <tr>
+                    <td width="200">Nama Kajian</td>
+                    <td width="5">:</td>
+                    <td>{{ object.name }}</td>
+                </tr>
+                <tr>
+                    <td width="200">Penanggung Jawab Kajian</td>
+                    <td width="5">:</td>
+                    <td>{{ object.pj_kajian }}</td>
+                </tr>
+                <tr>
+                    <td width="200">Anggota kajian</td>
+                    <td width="5">:</td>
+                    <td>
+                        <ul>
+                            {% for i in object.anggota.all %}
+                                <li>{{ i }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="200">Abstrak</td>
+                    <td width="5">:</td>
+                    <td>{{ object.abstrak }}</td>
+                </tr>
+
+                <tr>
+                    <td width="200">Uraian Singkat</td>
+                    <td width="5">:</td>
+                    <td>{{ object.uraian_singkat }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <footer class="content-footer">
+            <div>
+                <span>&copy; 2019 DashForge v1.0.0. </span>
+                <span>Made by <a href="http://themepixels.me">ThemePixels</a></span>
+            </div>
+            <div>
+                <nav class="nav">
+                    <a href="https://themeforest.net/licenses/standard" class="nav-link">Licenses</a>
+                    <a href="../change-log.html" class="nav-link">Change Log</a>
+                    <a href="https://discordapp.com/invite/RYqkVuw" class="nav-link">Get Help</a>
+                </nav>
+            </div>
+        </footer><!-- content-footer -->
+
+    </div><!-- container -->
+
+
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'lib/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-dt/js/dataTables.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-responsive-dt/js/responsive.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/select2/js/select2.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'ajax_datatable/js/utils.js' %}"></script>
+    <script>
+
+
+    </script>
+
+{% endblock %}
+
+

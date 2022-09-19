@@ -36,6 +36,10 @@ class KajianAjaxView(AjaxDatatableView):
         <a href="%s">file</a>
         """ % path_file
         row['action'] = f"""
+                    <a href="#" class="btn btn-primary" id="add" 
+                    onclick="add('{row['pk']}'); " >
+                       Tambah Progress
+                    </a>
                     <a href="#" class="btn btn-info btn-edit" id="edit"
                     onclick="edit('{row['pk']}'); " >
                        Edit
