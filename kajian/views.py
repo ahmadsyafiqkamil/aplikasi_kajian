@@ -72,6 +72,13 @@ class ProgressKajianTambah(LoginRequiredMixin, generic.edit.CreateView):
         print(self.kwargs["pk"])
         progres = form.save(commit=False)
         progres.kajian = Kajian.objects.get(id=self.kwargs["pk"])
-        # ProgresKajian.kajian = self.kwargs["pk"]
         progres.save()
         return super(ProgressKajianTambah, self).form_valid(form)
+
+
+# class ProgressKajianDetailView(LoginRequiredMixin, generic.DetailView):
+#     model = ProgresKajian
+#     template_name = 'content/kajian_detail_coba.html'
+#
+#     def get_object(self, queryset=None):
+#         return ProgresKajian.objects.filter(kajian__id=self.kwargs["pk"])

@@ -16,8 +16,14 @@
 {% block content %}
     <div class="container">
         <h1 class="df-title">Detail Kajian {{ object.name }}</h1>
-        <a href="{% url 'kajian:kajian_tambah_progres' object.id %}">Tambah Progres Kajian</a>
-        <div class="row">
+        <div class="col-md">
+            <p>
+                <a class="btn btn-primary" href="{% url 'kajian:kajian_tambah_progres' object.id %}">Tambah Progres
+                    Kajian</a>
+            </p>
+        </div>
+
+        <div class="col-lg">
             <table class="table table-striped table-hover table-primary">
                 <tbody>
 
@@ -53,11 +59,36 @@
                     <td width="5">:</td>
                     <td>{{ object.uraian_singkat }}</td>
                 </tr>
+                <tr>
+                    <td width="200">File</td>
+                    <td width="5">:</td>
+                    <td>
+                        {% if object.file %}
+                            <a href="{{ object.file.url }}">File</a>
+                        {% else %}
+                            <p>belum upload</p>
+                        {% endif %}
+                    </td>
+                </tr>
                 </tbody>
             </table>
+
+
         </div>
 
-
+        <div class="col-lg">
+            <h1 class="df-title">Progres Kajian {{ object.name }}</h1>
+            {% if object.progreskajian_set.all %}
+                <div id="accordion2" class="accordion">
+                    {% for i in object.progreskajian_set.all %}
+                        <h6 class="accordion-title">{{ i.name }}</h6>
+                        <div class="accordion-body">{{ i.progres }}</div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Belum ada Progres</p>
+            {% endif %}
+        </div>
         <footer class="content-footer">
             <div>
                 <span>&copy; 2019 DashForge v1.0.0. </span>
@@ -84,8 +115,49 @@
     <script src="{% static 'lib/datatables.net-responsive-dt/js/responsive.dataTables.min.js' %}"></script>
     <script src="{% static 'lib/select2/js/select2.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'ajax_datatable/js/utils.js' %}"></script>
+    <script src="{% static 'lib/jqueryui/jquery-ui.min.js' %}"></script>
     <script>
+        $(function () {
+            'use strict'
 
+            // Default functionality
+            $('#accordion1').accordion({
+                heightStyle: 'content'
+            });
+
+            // Collapse content
+            $('#accordion2').accordion({
+                heightStyle: 'content',
+                collapsible: true
+            });
+
+            // Custom style
+            $('#accordion3').accordion({
+                heightStyle: 'content'
+            });
+
+            $('#accordion4').accordion({
+                heightStyle: 'content'
+            });
+
+            // Colored variant
+            $('#accordion5').accordion({
+                heightStyle: 'content'
+            });
+
+            $('#accordion6').accordion({
+                heightStyle: 'content'
+            });
+
+            $('#accordion7').accordion({
+                heightStyle: 'content'
+            });
+
+            $('#accordion8').accordion({
+                heightStyle: 'content'
+            });
+
+        });
 
     </script>
 

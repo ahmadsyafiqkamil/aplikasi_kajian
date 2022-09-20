@@ -38,9 +38,9 @@ class ProgresKajianForm(forms.ModelForm):
         model = ProgresKajian
         fields = ('name', 'progres')
         labels = {
-            'name': _('Progres'),
+            'name': _('Judul Progress'),
             # 'kajian': _('Nama Kajian'),
-            'progres': _('Progres'),
+            'progres': _('Uraian Progres'),
         }
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', }),
