@@ -17,12 +17,11 @@
     <div class="container">
 
         <h1>Daftar Kajian</h1>
-        <a href='{% url "kajian:kajian" %}' class="btn btn-info btn-info">Tambah Kajian</a>
+        <div>
+
+            <a href='{% url "kajian:kajian" %}' class="btn btn-info btn-info">Tambah Kajian</a>
+        </div>
         <br>
-        {#        {% for kajian in object_list %}#}
-        {#            <p>{{ kajian.nama_kajian }}</p>#}
-        {#        {% endfor %}#}
-        {#        <div class="table-responsive">#}
         <div class="table-responsive">
             <table id="kajian" width="100%" class="table table-striped table-bordered dt-responsive compact nowrap">
             </table>
@@ -81,7 +80,8 @@
                     processing: false,
                     autoWidth: false,
                     full_row_select: true,
-                    scrollX: false
+                    scrollX: false,
+                    responsive: true
                 }, {
                     // extra_data
                     // ...
@@ -95,6 +95,7 @@
             console.log(clicked_id)
             location.href = "/kajian_edit/" + clicked_id;
         }
+
         function add(clicked_id) {
             console.log(clicked_id)
             location.href = "/kajian_detail/" + clicked_id;

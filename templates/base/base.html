@@ -64,8 +64,9 @@
         {% block navbar-menu-header %}{% endblock %}
 
     </div><!-- nav-wrapper -->
-    <div class="navbar-right">
+    <div class="navbar-right col-md" >
         {% if user.is_authenticated %}
+
             <label>{{ user.username }} - {{ user.profile.satker }}</label>
 
             <a href="{% url 'logout' %}?next=/" class="btn btn-buy"><i

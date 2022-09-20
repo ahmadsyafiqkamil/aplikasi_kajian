@@ -34,9 +34,6 @@ class KajianView(LoginRequiredMixin, generic.FormView):
 class KajianListView(LoginRequiredMixin, generic.TemplateView):
     template_name = 'content/kajian_list.html'
 
-    # def get_queryset(self):
-    #     return Kajian.objects.filter(created_by=self.request.user)
-
 
 class KajianEditView(LoginRequiredMixin, generic.edit.UpdateView):
     model = Kajian
@@ -75,10 +72,3 @@ class ProgressKajianTambah(LoginRequiredMixin, generic.edit.CreateView):
         progres.save()
         return super(ProgressKajianTambah, self).form_valid(form)
 
-
-# class ProgressKajianDetailView(LoginRequiredMixin, generic.DetailView):
-#     model = ProgresKajian
-#     template_name = 'content/kajian_detail_coba.html'
-#
-#     def get_object(self, queryset=None):
-#         return ProgresKajian.objects.filter(kajian__id=self.kwargs["pk"])
