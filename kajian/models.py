@@ -11,6 +11,15 @@ from ajax_datatable.utils import format_datetime
 from .validator import validate_file_extension
 
 
+def user_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'user_{0}/{1}'.format(instance.user.id, filename)
+
+
+def _upload_path(instance, filename):
+    return instance.get_upload_path(filename)
+
+
 class BaseModel(models.Model):
     """
     Base class for all models;
@@ -92,11 +101,15 @@ class Kajian(BaseModel):
                                      through_fields=('kajian', 'anggota'), )
     uraian_singkat = models.CharField(max_length=150, verbose_name='Uraian Singkat', null=True, blank=True)
     abstrak = models.TextField(null=True, blank=True)
-    file = models.FileField(upload_to='document/%Y-%m-%d/', validators=[validate_file_extension], null=True, blank=True)
+    file = models.FileField(upload_to=_upload_path, validators=[validate_file_extension], null=True, blank=True)
+
     # status = models.IntegerChoices()
 
     class Meta:
         db_table = "tbl_kajian"
+
+    def get_upload_path(self, filename):
+        return "document/" + str(self.created_by) + "/" + filename
 
 
 class AnggotaKajian(models.Model):
@@ -113,6 +126,10 @@ class AnggotaKajian(models.Model):
 class ProgresKajian(BaseModel):
     kajian = models.ForeignKey('Kajian', on_delete=models.CASCADE)
     progres = models.TextField()
+    file = models.FileField(upload_to=_upload_path, validators=[validate_file_extension], null=True, blank=True)
 
     class Meta:
         db_table = "tbl_progress_kajian"
+
+    def get_upload_path(self, filename):
+        return "document/" + str(self.created_by) + "/" + filename

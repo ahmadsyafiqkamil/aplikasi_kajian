@@ -58,8 +58,24 @@ class KajianAjaxView(AjaxDatatableView):
                                     <a href="#" class="btn btn-primary" id="add" 
                                     onclick="add('{row['pk']}'); " >
                                        Detail
+                                    </a> 
+                                """
+        else:
+            row['action'] = f"""
+                                    <a href="#" class="btn btn-primary" id="add" 
+                                    onclick="add('{row['pk']}'); " >
+                                       Tambah Progress
                                     </a>
-                                    
+                                    <a href="#" class="btn btn-info btn-edit" id="edit"
+                                    onclick="edit('{row['pk']}'); " >
+                                       Edit
+                                    </a>
+                                    <a href="/kajian_delete/{row['pk']}" class="btn btn-danger" data-toggle="modal"
+                                    data-target="#delete-item-modal"
+                                    id="delete-item"
+                                    >
+                                    Delete
+                                    </a>
                                 """
 
     def get_initial_queryset(self, request=None):
