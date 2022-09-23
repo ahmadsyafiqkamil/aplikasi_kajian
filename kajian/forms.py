@@ -36,17 +36,14 @@ class KajianForm(forms.ModelForm):
 class ProgresKajianForm(forms.ModelForm):
     class Meta:
         model = ProgresKajian
-        fields = ('name', 'progres')
+        fields = ('name', 'progres','file')
         labels = {
             'name': _('Judul Progress'),
-            # 'kajian': _('Nama Kajian'),
             'progres': _('Uraian Progres'),
+            'file': _('Dokumen'),
         }
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', }),
-            # 'kajian': forms.Select(attrs={'class': 'form-control select2', }),
             'progres': forms.Textarea(attrs={'class': 'form-control', }),
+            'file': forms.FileInput(),
         }
-    # def __init__(self, *args, **kwargs):
-    #     super(ProgresKajianForm, self).__init__(*args, **kwargs)
-    #     self.fields['kajian'].queryset = User.objects.get(id = "")

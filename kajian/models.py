@@ -125,7 +125,7 @@ class AnggotaKajian(models.Model):
 
 class ProgresKajian(BaseModel):
     kajian = models.ForeignKey('Kajian', on_delete=models.CASCADE)
-    progres = models.TextField()
+    progres = models.TextField(null=True, blank=True)
     file = models.FileField(upload_to=_upload_path, validators=[validate_file_extension], null=True, blank=True)
 
     class Meta:
@@ -133,3 +133,14 @@ class ProgresKajian(BaseModel):
 
     def get_upload_path(self, filename):
         return "document/" + str(self.created_by) + "/" + filename
+
+class KomenProgresKajian(BaseModel):
+    progres = models.ForeignKey(ProgresKajian,on_delete=models.CASCADE)
+    komentar = models.TextField(null=True, blank=True)
+    file = models.FileField(upload_to=_upload_path, validators=[validate_file_extension], null=True, blank=True)
+
+    def get_upload_path(self, filename):
+        return "document/" + str(self.created_by) + "/" + filename
+    class Meta:
+        db_table = "tbl_komen_progres_kajian"
+

@@ -5,7 +5,8 @@
 {% endblock %}
 {% block content %}
     <div class="container">
-{#        <h1 class="df-title">{% if request.get_full_path == '/kajian/' %}Kajian{% else %}Edit Kajian{% endif %}</h1>#}
+        <h1 class="df-title">{% if request.get_full_path == '/kajian_tambah_progress/' %}Kajian{% else %}Edit
+            Kajian{% endif %}</h1>
         <form action="" method="post" enctype='multipart/form-data'>
             {% csrf_token %}
             <div class="form-row">
@@ -21,6 +22,9 @@
             <button class="btn btn-secondary" type="cancel">Cancel</button>
         </form>
     </div>
+
+
+
 {% endblock %}
 
 {% block js %}
@@ -85,6 +89,7 @@
             });
 
         });
+
     </script>
 {% endblock %}
 

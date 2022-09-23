@@ -19,10 +19,6 @@ class KajianView(LoginRequiredMixin, generic.FormView):
     form_class = KajianForm
     success_url = '/kajian_list/'
 
-    # def get_form_kwargs(self):
-    #     kwargs = {'user': self.request.user, }
-    #     return kwargs
-
     def form_valid(self, form):
         kajian = form.save(commit=False)
         kajian.created_by = self.request.user
@@ -63,7 +59,6 @@ class ProgressKajianTambah(LoginRequiredMixin, generic.edit.CreateView):
     model = ProgresKajian
     template_name = 'content/progres_kajian.html'
     form_class = ProgresKajianForm
-    success_url = '/kajian_list/'
 
     def form_valid(self, form):
         print(self.kwargs["pk"])
@@ -72,3 +67,26 @@ class ProgressKajianTambah(LoginRequiredMixin, generic.edit.CreateView):
         progres.save()
         return super(ProgressKajianTambah, self).form_valid(form)
 
+    def get_success_url(self):
+        return reverse_lazy('kajian:kajian_detail', kwargs={'pk': self.kwargs['pk']})
+
+
+class ProgressKajianEdit(LoginRequiredMixin, generic.edit.UpdateView):
+    model = ProgresKajian
+    template_name = 'content/progres_kajian.html'
+    form_class = ProgresKajianForm
+
+
+    def get_success_url(self):
+        pk = ProgresKajian.objects.values("kajian__id").get(id=self.kwargs["pk"])
+        return reverse_lazy('kajian:kajian_detail',
+                            kwargs={'pk': pk["kajian__id"]})
+
+
+class ProgresKajianDelete(LoginRequiredMixin, generic.edit.DeleteView):
+    model = ProgresKajian
+
+    def get_success_url(self):
+        pk = ProgresKajian.objects.values("kajian__id").get(id=self.kwargs["pk"])
+        return reverse_lazy('kajian:kajian_detail',
+                            kwargs={'pk': pk["kajian__id"]})
