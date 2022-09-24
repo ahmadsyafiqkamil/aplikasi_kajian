@@ -77,7 +77,7 @@ class BaseModel(models.Model):
 
 class Profile(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    fungsi = models.CharField(max_length=100)
+    fungsi = models.CharField(max_length=100, null=True, blank=True, )
     satker = models.CharField(max_length=100)
 
     def __str__(self):

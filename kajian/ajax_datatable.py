@@ -35,8 +35,8 @@ class KajianAjaxView(AjaxDatatableView):
 
     def customize_row(self, row, obj):
         grup = User.objects.values("groups").get(username=self.request.user)
-        fungsi = Profile.objects.values("fungsi").get(user=self.request.user)
-        print(fungsi)
+        kajian_fungsi = self.model.objects.values("pj_kajian__profile__fungsi").get(id=row["pk"])
+        kajian_satker = self.model.objects.values("pj_kajian__profile__satker").get(id=row["pk"])
         file = self.model.objects.get(id=row["pk"])
         if file.file:
             path_file = file.file.url
@@ -45,8 +45,8 @@ class KajianAjaxView(AjaxDatatableView):
         row['file'] = """
         <a href="%s">file</a>
         """ % path_file
-        row["direktorat"] = self.request.user.profile.satker
-        row["fungsi"] = self.request.user.profile.fungsi
+        row["direktorat"] = kajian_satker["pj_kajian__profile__satker"]
+        row["fungsi"] = kajian_fungsi["pj_kajian__profile__fungsi"]
         if grup["groups"] == 3:
             row['action'] = f"""
                         <a href="#" class="btn btn-primary" id="add" 
