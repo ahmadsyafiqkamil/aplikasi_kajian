@@ -76,7 +76,6 @@ class ProgressKajianEdit(LoginRequiredMixin, generic.edit.UpdateView):
     template_name = 'content/progres_kajian.html'
     form_class = ProgresKajianForm
 
-
     def get_success_url(self):
         pk = ProgresKajian.objects.values("kajian__id").get(id=self.kwargs["pk"])
         return reverse_lazy('kajian:kajian_detail',

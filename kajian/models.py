@@ -77,6 +77,7 @@ class BaseModel(models.Model):
 
 class Profile(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    fungsi = models.CharField(max_length=100)
     satker = models.CharField(max_length=100)
 
     def __str__(self):
@@ -132,15 +133,16 @@ class ProgresKajian(BaseModel):
         db_table = "tbl_progress_kajian"
 
     def get_upload_path(self, filename):
-        return "document/" + str(self.created_by) + "/" + filename
+        return "document/" + str(self.kajian.created_by) + "/" + filename
+
 
 class KomenProgresKajian(BaseModel):
-    progres = models.ForeignKey(ProgresKajian,on_delete=models.CASCADE)
+    progres = models.ForeignKey(ProgresKajian, on_delete=models.CASCADE)
     komentar = models.TextField(null=True, blank=True)
     file = models.FileField(upload_to=_upload_path, validators=[validate_file_extension], null=True, blank=True)
 
     def get_upload_path(self, filename):
-        return "document/" + str(self.created_by) + "/" + filename
+        return "document/" + str(self.progres.kajian.created_by) + "/" + filename
+
     class Meta:
         db_table = "tbl_komen_progres_kajian"
-
