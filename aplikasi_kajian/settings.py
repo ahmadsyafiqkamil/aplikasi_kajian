@@ -139,8 +139,8 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# LOGIN_REDIRECT_URL = '/kajian'
-LOGIN_REDIRECT_URL = '/kajian_list/'
+# LOGIN_REDIRECT_URL = '/kajian_list/'
+LOGIN_REDIRECT_URL = '/'
 
 # ajax-datatable
 

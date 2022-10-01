@@ -1,5 +1,5 @@
 from django.contrib import admin
-from kajian.models import Kajian, ProgresKajian, Profile, AnggotaKajian
+from kajian.models import Kajian, ProgresKajian, Profile, KomenProgresKajian
 
 
 # Register your models here.
@@ -11,6 +11,8 @@ class KajianAdmin(admin.ModelAdmin):
 class ProgressAdmin(admin.ModelAdmin):
     pass
 
+class KomenProgresAdmin(admin.ModelAdmin):
+    pass
 
 class ProfileAdmin(admin.ModelAdmin):
     pass
@@ -21,4 +23,5 @@ class ProfileAdmin(admin.ModelAdmin):
 admin.site.register(Kajian, KajianAdmin)
 admin.site.register(ProgresKajian, ProgressAdmin)
 admin.site.register(Profile, ProfileAdmin)
+admin.site.register(KomenProgresKajian, KomenProgresAdmin)
 # admin.site.register(AnggotaKajian, AnggotaAdmin)

@@ -1,6 +1,6 @@
 # from django.forms import ModelForm, TextInput
 from django import forms
-from .models import Kajian, ProgresKajian
+from .models import Kajian, ProgresKajian, KomenProgresKajian
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from django.forms import modelformset_factory
@@ -45,5 +45,20 @@ class ProgresKajianForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', }),
             'progres': forms.Textarea(attrs={'class': 'form-control', }),
+            'file': forms.FileInput(),
+        }
+
+class KomenKajianForm(forms.ModelForm):
+    class Meta:
+        model = KomenProgresKajian
+        fields = ('name', 'komentar','file')
+        labels = {
+            'name': _('Judul Komentar'),
+            'komentar': _('Uraian Komentar'),
+            'file': _('Dokumen'),
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', }),
+            'komentar': forms.Textarea(attrs={'class': 'form-control', }),
             'file': forms.FileInput(),
         }

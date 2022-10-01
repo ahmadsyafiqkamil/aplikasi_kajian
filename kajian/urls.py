@@ -13,7 +13,8 @@ urlpatterns = [
     re_path('kajian_delete/(?P<pk>[-\w]*)$', KajianDeleteView.as_view(), name='kajian_delete'),
     re_path('kajian_detail/(?P<pk>[-\w]*)$', KajianDetailView.as_view(), name='kajian_detail'),
     re_path('kajian_tambah_progress/(?P<pk>[-\w]*)$', ProgressKajianTambah.as_view(), name='kajian_tambah_progres'),
+    re_path('kajian_detail_progress/(?P<pk>[-\w]*)$', ProgresDetail.as_view(), name='kajian_detail_progres'),
     re_path('kajian_edit_progress/(?P<pk>[-\w]*)$', ProgressKajianEdit.as_view(), name='kajian_edit_progres'),
     re_path('kajian_delete_progress/(?P<pk>[-\w]*)$', ProgresKajianDelete.as_view(), name='kajian_delete_progres'),
-
+    re_path('komen_kajian/(?P<pk>[-\w]*)$', TambahKomentarKajian.as_view(), name='komen_kajian'),
 ]

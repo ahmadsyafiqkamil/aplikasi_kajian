@@ -58,13 +58,26 @@
     </div><!-- navbar-brand -->
     <div id="navbarMenu" class="navbar-menu-wrapper">
         <div class="navbar-menu-header">
-            <a href="/" class="df-logo">dash<span>forge</span></a>
-            <a id="mainMenuClose" href=""><i data-feather="x"></i></a>
+          <a href="../index.html" class="df-logo">dash<span>forge</span></a>
+          <a id="mainMenuClose" href=""><i data-feather="x"></i></a>
         </div><!-- navbar-menu-header -->
-        {% block navbar-menu-header %}{% endblock %}
+        <ul class="nav navbar-menu">
+          <li class="nav-label pd-l-20 pd-lg-l-25 d-lg-none">Main Navigation</li>
+{#          <li class="nav-item with-sub">#}
+{#            <a href="" class="nav-link"><i data-feather="pie-chart"></i> Dashboard</a>#}
+{#            <ul class="navbar-menu-sub">#}
+{#              <li class="nav-sub-item"><a href="../template/classic/dashboard-one.html" class="nav-sub-link"><i data-feather="bar-chart-2"></i>Sales Monitoring</a></li>#}
+{#              <li class="nav-sub-item"><a href="../template/classic/dashboard-two.html" class="nav-sub-link"><i data-feather="bar-chart-2"></i>Website Analytics</a></li>#}
+{#              <li class="nav-sub-item"><a href="../template/classic/dashboard-three.html" class="nav-sub-link"><i data-feather="bar-chart-2"></i>Cryptocurrency</a></li>#}
+{#              <li class="nav-sub-item"><a href="../template/classic/dashboard-four.html" class="nav-sub-link"><i data-feather="bar-chart-2"></i>Helpdesk Management</a></li>#}
+{#            </ul>#}
+{#          </li>#}
 
-    </div><!-- nav-wrapper -->
-    <div class="navbar-right col-md" >
+          <li class="nav-item"><a href="{% url 'kajian:kajian_list' %}" class="nav-link"><i data-feather="box"></i> Daftar Kajian</a></li>
+{#          <li class="nav-item active"><a href="index.html" class="nav-link"><i data-feather="box"></i> Daftar Kajian</a></li>#}
+        </ul>
+      </div><!-- navbar-menu-wrapper -->
+    <div class="navbar-right col-md">
         {% if user.is_authenticated %}
 
             <label>{{ user.username }} - {{ user.profile.satker }}</label>

@@ -1,8 +1,8 @@
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import KajianForm, ProgresKajianForm
-from .models import Kajian, ProgresKajian
+from .forms import KajianForm, ProgresKajianForm, KomenKajianForm
+from .models import Kajian, ProgresKajian, KomenProgresKajian
 
 
 class HomeView(LoginRequiredMixin, generic.TemplateView):
@@ -89,3 +89,25 @@ class ProgresKajianDelete(LoginRequiredMixin, generic.edit.DeleteView):
         pk = ProgresKajian.objects.values("kajian__id").get(id=self.kwargs["pk"])
         return reverse_lazy('kajian:kajian_detail',
                             kwargs={'pk': pk["kajian__id"]})
+
+
+class TambahKomentarKajian(LoginRequiredMixin, generic.edit.CreateView):
+    model = KomenProgresKajian
+    template_name = 'content/progres_kajian.html'
+    form_class = KomenKajianForm
+    success_url = reverse_lazy('kajian:kajian_list')
+
+    def form_valid(self, form):
+        # print(self.model.progres.kajian.objects.get(id=self.kwargs["pk"]))
+        progres = form.save(commit=False)
+        progres.progres = ProgresKajian.objects.get(id=self.kwargs["pk"])
+        progres.save()
+        return super(TambahKomentarKajian, self).form_valid(form)
+
+    # def get_success_url(self):
+    #     return reverse_lazy('kajian:kajian_detail', kwargs={'pk': self.kwargs['pk']})
+
+class ProgresDetail(LoginRequiredMixin,generic.DetailView):
+    model = ProgresKajian
+    template_name = 'content/detail_progress.html'
+

@@ -1,5 +1,6 @@
 {% extends 'base/base.html' %}
 {% load static %}
+{% load custom_tags %}
 {% block css %}
     <link href="{% static 'lib/datatables.net-dt/css/jquery.dataTables.min.css' %}" rel="stylesheet">
     <link href="{% static 'lib/datatables.net-responsive-dt/css/responsive.dataTables.min.css' %}" rel="stylesheet">
@@ -18,8 +19,10 @@
 
         <h1>Daftar Kajian</h1>
         <div>
-
-            <a href='{% url "kajian:kajian" %}' class="btn btn-info btn-info">Tambah Kajian</a>
+            {% if request.user|has_group:"Pimpinan" %}
+            {% else %}
+                <a href='{% url "kajian:kajian" %}' class="btn btn-info btn-info">Tambah Kajian</a>
+            {% endif %}
         </div>
         <br>
         <div class="table-responsive">
