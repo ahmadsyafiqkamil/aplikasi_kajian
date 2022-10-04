@@ -9,6 +9,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from ajax_datatable.utils import format_datetime
 from .validator import validate_file_extension
+# from notifications.signals import notify
 
 
 def user_directory_path(instance, filename):
@@ -95,6 +96,7 @@ def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
 
+
 class Kajian(BaseModel):
     # nama_kajian = models.CharField(max_length=100, verbose_name='Name Kajian')
     pj_kajian = models.ForeignKey(User, on_delete=models.CASCADE, related_name='penanggung_jawab_kajian')
@@ -146,3 +148,10 @@ class KomenProgresKajian(BaseModel):
 
     class Meta:
         db_table = "tbl_komen_progres_kajian"
+
+
+
+# notification
+
+# def notif_comment_handler(sender, instance, created, **kwargs):
+#     notify.send(instance,verb="")

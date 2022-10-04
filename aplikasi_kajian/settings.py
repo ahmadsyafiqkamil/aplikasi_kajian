@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'widget_tweaks',
     'ajax_datatable',
-    # 'custom_tags'
+    # 'custom_tags',
+    'notifications',
 ]
 
 MIDDLEWARE = [
@@ -145,9 +146,17 @@ LOGIN_REDIRECT_URL = '/'
 # ajax-datatable
 
 AJAX_DATATABLE_MAX_COLUMNS = 30
-AJAX_DATATABLE_TRACE_COLUMNDEFS = True
-AJAX_DATATABLE_TRACE_QUERYDICT = True
-AJAX_DATATABLE_TRACE_QUERYSET = True
+AJAX_DATATABLE_TRACE_COLUMNDEFS = False
+AJAX_DATATABLE_TRACE_QUERYDICT = False
+AJAX_DATATABLE_TRACE_QUERYSET = False
 AJAX_DATATABLE_TEST_FILTERS = False
 AJAX_DATATABLE_DISABLE_QUERYSET_OPTIMIZATION = False
 AJAX_DATATABLE_STRIP_HTML_TAGS = True
+
+# django notification
+
+DJANGO_NOTIFICATIONS_CONFIG = {
+    'SOFT_DELETE': True,
+    # 'PAGINATE_BY': True,
+
+    }

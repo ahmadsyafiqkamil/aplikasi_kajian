@@ -17,4 +17,7 @@ urlpatterns = [
     re_path('kajian_edit_progress/(?P<pk>[-\w]*)$', ProgressKajianEdit.as_view(), name='kajian_edit_progres'),
     re_path('kajian_delete_progress/(?P<pk>[-\w]*)$', ProgresKajianDelete.as_view(), name='kajian_delete_progres'),
     re_path('komen_kajian/(?P<pk>[-\w]*)$', TambahKomentarKajian.as_view(), name='komen_kajian'),
+
+    path('notifications/', NotificationListView.as_view(), name='notifications'),
+    re_path('mark-as-read/(?P<slug>\d+)/$', mark_as_read, name='mark_as_read'),
 ]
