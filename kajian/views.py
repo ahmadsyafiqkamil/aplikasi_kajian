@@ -122,9 +122,12 @@ class ProgresDetail(LoginRequiredMixin, generic.DetailView):
     template_name = 'content/detail_progress.html'
 
 
-class NotificationListView(LoginRequiredMixin,generic.ListView):
+class NotificationListView(LoginRequiredMixin, generic.ListView):
     model = Notification
     template_name = 'content/notification.html'
+
+    def get_queryset(self):
+        return self.model.objects.filter(recipient=self.request.user)
 
 
 @login_required
@@ -141,5 +144,3 @@ def mark_as_read(request, slug=None):
         return redirect(_next)
 
     return redirect('kajian:notifications')
-
-
