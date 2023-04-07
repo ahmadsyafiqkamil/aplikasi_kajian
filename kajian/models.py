@@ -9,6 +9,8 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from ajax_datatable.utils import format_datetime
 from .validator import validate_file_extension
+
+
 # from notifications.signals import notify
 
 
@@ -94,7 +96,6 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
-
 
 
 class Kajian(BaseModel):

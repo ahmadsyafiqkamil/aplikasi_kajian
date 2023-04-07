@@ -1,0 +1,46 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block css %}
+
+{% endblock %}
+{% block content %}
+
+    <div class="container">
+        <h1>Halaman Data</h1>
+
+        <div class="df-example">
+            <div class="row mt-4">
+            <div class="col-md-4 offset-md-4">
+                <form>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Baris kedua: List hasil input -->
+        <div class="row mt-4">
+            <div class="col-md-8 offset-md-2">
+                <ul class="list-group">
+                    <li class="list-group-item">Hasil Pencarian 1</li>
+                    <li class="list-group-item">Hasil Pencarian 2</li>
+                    <li class="list-group-item">Hasil Pencarian 3</li>
+                </ul>
+            </div>
+        </div>
+
+        </div>
+
+
+    </div>
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}
+
+
