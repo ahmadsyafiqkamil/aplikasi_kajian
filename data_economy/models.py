@@ -63,6 +63,32 @@ class BaseModel(models.Model):
         self.updated = today
         return super(BaseModel, self).save(*args, **kwargs)
 
+
 class AktifitasData(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     data = models.JSONField(verbose_name="Data")
+
+
+class Domain(models.Model):
+    domain_id = models.CharField(max_length=4, verbose_name="domain_id", primary_key=True)
+    domain_name = models.CharField(max_length=250, null=True, blank=True)
+    domain_url = models.CharField(max_length=250, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.domain_name)
+
+    class Meta:
+        db_table = "tbl_domain"
+
+
+class KabDomain(models.Model):
+    domain_id = models.CharField(max_length=4, verbose_name="domain_id", primary_key=True)
+    domain_name = models.CharField(max_length=250, null=True, blank=True)
+    domain_url = models.CharField(max_length=250, null=True, blank=True)
+    domain_domain_id = models.ForeignKey(Domain, on_delete=models.CASCADE, verbose_name="domain dari domain")
+
+    def __str__(self):
+        return str(self.domain_name)
+
+    class Meta:
+        db_table = "tbl_kab_domain"

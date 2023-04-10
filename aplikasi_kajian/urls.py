@@ -22,7 +22,7 @@ import notifications.urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('kajian.urls')),
-    path('data/', include('data_economy.urls')),
+    path('data', include('data_economy.urls')),
     path('', include('django.contrib.auth.urls')),
     path('inbox/notifications/', include(notifications.urls, namespace='notifications'))
 

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'kajian',
+    'data_economy',
     'crispy_forms',
     'widget_tweaks',
     'ajax_datatable',
