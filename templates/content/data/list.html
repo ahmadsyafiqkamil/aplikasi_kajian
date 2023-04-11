@@ -1,0 +1,146 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block css %}
+    <link href="{% static 'lib/select2/css/select2.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/ion-rangeslider/css/ion.rangeSlider.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/datatables.net-dt/css/jquery.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/datatables.net-responsive-dt/css/responsive.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/select2/css/select2.min.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div data-label="Daftar Infografis" class="df-example demo-table">
+
+            <form method="post" id="search-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" id="search-button" class="btn btn-primary">Cari</button>
+            </form>
+            <br>
+            <table id="example4" class="table">
+                <thead>
+                <tr>
+                    {{ th|safe }}
+                </tr>
+                </thead>
+            </table>
+            <div id="pagination"></div>
+        </div><!-- df-example -->
+    </div>
+
+{% endblock %}
+
+{% block js %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"></script>
+    <script src="{% static 'lib/prismjs/prism.js' %}"></script>
+    <script src="{% static 'lib/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-dt/js/dataTables.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-responsive-dt/js/responsive.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/select2/js/select2.min.js' %}"></script>
+    <script src="{% static 'lib/jqueryui/jquery-ui.min.js' %}"></script>
+    <script>
+        $(function () {
+            'use strict'
+            {#$('#search-form').serialize()#}
+
+            $('.select2').select2({
+                placeholder: 'Choose one',
+                searchInputPlaceholder: 'Search options'
+
+            });
+            $('#search-form').submit(function (event) {
+                event.preventDefault(); // hindari form submit secara normal
+                var domain = $('#id_domain').val();
+                populateDataTable(domain);
+
+            });
+
+            function populateDataTable(domain) {
+                if ($.fn.DataTable.isDataTable('#example4')) {
+                    $('#example4').DataTable().clear().destroy();
+                }
+                var table = $('#example4').DataTable({
+                    ordering: false,
+                    responsive: true,
+                    processing: true,
+                    serverSide: true,
+
+                    ajax: {
+                        url: "{{ datatable_url|safe }}",
+                        type: 'POST',
+                        async: true,
+                        data: {
+                            "domain": domain,
+                            'page': 1,
+                            "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
+                        }
+                    },
+                    "columns": {{ columns|safe }},
+
+                })
+            }
+
+            /*
+                        function populateDataTable(domain) {
+                            var currentPage = 1;
+                            var table = $('#example4').DataTable({
+                                "serverSide": true,
+                                'responsive': true,
+                                "destroy": true,
+                                "paging": true, // enable pagination
+                                "pageLength": 10, // set the number of rows per page
+                                "lengthChange": false,
+                                "searching": false,
+                                "ordering": false,
+                                "info": true,
+                                "autoWidth": true,
+                                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                                "pagingType": "full_numbers",
+                                "ajax": {
+                                    "url": "/data_get_infografis/",
+                                    "type": "POST",
+                                    "data": function (d) {
+                                        d.domain = domain;
+                                        d.page = currentPage;
+                                        d.csrfmiddlewaretoken = $('input[name=csrfmiddlewaretoken]').val()
+                                    }
+                                },
+
+                                "columns": [
+                                    {"data": "title"},
+                                    {"data": "category"},
+                                    {
+                                        "data": "img",
+                                        "render": function (data, type, full, meta) {
+                                            return '<img src="' + data + '" height="50"/>';
+                                        }
+                                    },
+                                    {
+                                        "data": "dl",
+                                        "render": function (data, type, full, meta) {
+                                            return '<a href="' + data + '">Download</a>';
+                                        }
+                                    }
+                                ],
+                                "drawCallback": function (settings) {
+                                    currentPage = table.page.info().page + 1;
+                                    console.log(currentPage)
+                                }
+
+                            });
+                        }
+
+             */
+
+
+        });
+    </script>
+{% endblock %}
+
+
+
+
+
+

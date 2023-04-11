@@ -19,7 +19,7 @@ class HomeView(LoginRequiredMixin, generic.TemplateView):
 
 
 class KajianView(LoginRequiredMixin, generic.FormView):
-    template_name = 'content/kajian.html'
+    template_name = 'content/kajian/kajian.html'
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
     form_class = KajianForm
@@ -34,12 +34,12 @@ class KajianView(LoginRequiredMixin, generic.FormView):
 
 
 class KajianListView(LoginRequiredMixin, generic.TemplateView):
-    template_name = 'content/kajian_list.html'
+    template_name = 'content/kajian/kajian_list.html'
 
 
 class KajianEditView(LoginRequiredMixin, generic.edit.UpdateView):
     model = Kajian
-    template_name = 'content/kajian.html'
+    template_name = 'content/kajian/kajian.html'
     form_class = KajianForm
     success_url = '/kajian_list/'
 
@@ -58,12 +58,12 @@ class KajianDeleteView(LoginRequiredMixin, generic.edit.DeleteView):
 
 class KajianDetailView(LoginRequiredMixin, generic.DetailView):
     model = Kajian
-    template_name = 'content/kajian_detail.html'
+    template_name = 'content/kajian/kajian_detail.html'
 
 
 class ProgressKajianTambah(LoginRequiredMixin, generic.edit.CreateView):
     model = ProgresKajian
-    template_name = 'content/progres_kajian.html'
+    template_name = 'content/kajian/progres_kajian.html'
     form_class = ProgresKajianForm
 
     def form_valid(self, form):
@@ -79,7 +79,7 @@ class ProgressKajianTambah(LoginRequiredMixin, generic.edit.CreateView):
 
 class ProgressKajianEdit(LoginRequiredMixin, generic.edit.UpdateView):
     model = ProgresKajian
-    template_name = 'content/progres_kajian.html'
+    template_name = 'content/kajian/progres_kajian.html'
     form_class = ProgresKajianForm
 
     def get_success_url(self):
@@ -99,7 +99,7 @@ class ProgresKajianDelete(LoginRequiredMixin, generic.edit.DeleteView):
 
 class TambahKomentarKajian(LoginRequiredMixin, generic.edit.CreateView):
     model = KomenProgresKajian
-    template_name = 'content/progres_kajian.html'
+    template_name = 'content/kajian/progres_kajian.html'
     form_class = KomenKajianForm
     success_url = reverse_lazy('kajian:kajian_list')
 
@@ -119,7 +119,7 @@ class TambahKomentarKajian(LoginRequiredMixin, generic.edit.CreateView):
 
 class ProgresDetail(LoginRequiredMixin, generic.DetailView):
     model = ProgresKajian
-    template_name = 'content/detail_progress.html'
+    template_name = 'content/kajian/detail_progress.html'
 
 
 class NotificationListView(LoginRequiredMixin, generic.ListView):

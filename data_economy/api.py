@@ -32,6 +32,9 @@ class API():
                     dt = self.data_transform(data)
                     return dt
 
+            case "news":
+                pass
+
     def data_transform(self, data):
         dt = {
             "draw": data["data"][0]["page"],

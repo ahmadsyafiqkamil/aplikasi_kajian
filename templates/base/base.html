@@ -80,12 +80,12 @@
 
             <li class="nav-item"><a href="{% url 'kajian:kajian_list' %}" class="nav-link"><i data-feather="box"></i>Daftar
                 Kajian</a></li>
-            <li class="nav-item"><a href="{% url 'data:home' %}" class="nav-link"><i data-feather="box"></i>Data</a>
-            </li>
             <li class="nav-item with-sub">
-                <a href="" class="nav-link"><i data-feather="pie-chart"></i>Informasi</a>
+                <a href="" class="nav-link"><i data-feather="pie-chart"></i>Data BPS</a>
                 <ul class="navbar-menu-sub">
-                    <li class="nav-sub-item"><a href="{% url 'data:infografis' %}" class="nav-sub-link">Infografis BPS</a></li>
+                    <li class="nav-sub-item"><a href="{% url 'data:infografis' %}" class="nav-sub-link">Infografis
+                        BPS</a></li>
+                    <li class="nav-sub-item"><a href="{% url 'data:berita' %}" class="nav-sub-link">Siaran Pers</a>
                     <li class="nav-sub-item"><a href="{% url 'data:berita' %}" class="nav-sub-link">Berita BPS</a>
                     </li>
 
@@ -133,13 +133,31 @@
     </div><!-- az-header-right -->
 </header><!-- navbar -->
 
-{% block sidebar %}{% endblock %}
 
+<body class="pos-relative" data-spy="scroll" data-target="#navSection" data-offset="120">
+<div id="sidebarMenu" class="sidebar sidebar-fixed sidebar-components">
+    <div class="sidebar-header">
+        <a href="" id="mainMenuOpen"><i data-feather="menu"></i></a>
+        <h5>Components</h5>
+        <a href="" id="sidebarMenuClose"><i data-feather="x"></i></a>
+    </div><!-- sidebar-header -->
+    <div class="sidebar-body">
+        <ul class="sidebar-nav">
+            {% block sidebar %}{% endblock %}
+{#            <li class="nav-label mg-b-15">Browse Components</li>#}
+{#            <li class="nav-item"><a href="index.html" class="nav-link"><i data-feather="layout"></i> Introduction</a>#}
+{#            </li>#}
+{#            <li class="nav-item"><a href="grid.html" class="nav-link active"><i data-feather="grid"></i> Grid System</a>#}
+{#            </li>#}
 
-<div class="content content-fixed">
+        </ul>
+    </div><!-- sidebar-body -->
+</div><!-- sidebar -->
+<div class="content content-components">
 
     {% block content %}{% endblock %}
 </div><!-- content -->
+</body>
 
 <script src="{% static 'lib/jquery/jquery.min.js' %}"></script>
 <script src="{% static 'lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
