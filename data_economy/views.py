@@ -69,10 +69,32 @@ def get_view_press(request):
     if request.method == "POST":
         id = request.POST.get('id')
         domain = request.POST.get('domain')
-        print(id, domain)
         api = API()
         data = api.get_view(id=id, domain=domain, model="pressrelease")
-        print(data)
         return JsonResponse(data, safe=False)
+    else:
+        return HttpResponse("Invalid request method")
+
+
+class SubjectView(LoginRequiredMixin, generic.TemplateView):
+    template_name = "content/data/subject.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = DomainSearchForm()
+        return context
+
+
+def get_subject(request):
+    if request.method == 'POST':
+        api = API()
+        domain = request.POST.get('domain')
+        # page = request.POST.get('page')
+        draw = int(request.POST.get('draw'))
+        # start = int(request.POST.get('start'))
+        # length = int(request.POST.get('length'))
+        info = api.get_list(domain=domain, model="subject", page=draw)
+        print(info)
+        return JsonResponse(info, safe=False)
     else:
         return HttpResponse("Invalid request method")

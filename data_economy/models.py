@@ -92,3 +92,15 @@ class KabDomain(models.Model):
 
     class Meta:
         db_table = "tbl_kab_domain"
+
+
+class Subject(models.Model):
+    sub_id = models.IntegerField( verbose_name="sub_id", primary_key=True)
+    title = models.CharField(max_length=250, null=True, blank=True)
+    subcat_id = models.CharField(max_length=10, null=True, blank=True)
+    subcat = models.CharField(max_length=250, null=True, blank=True)
+
+
+class SubjectCategory(models.Model):
+    subcat_id = models.CharField(max_length=4, verbose_name="subcat_id", primary_key=True)
+    title = models.CharField(max_length=250, null=True, blank=True)

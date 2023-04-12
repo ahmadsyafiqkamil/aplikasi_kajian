@@ -8,29 +8,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Twitter -->
-    <meta name="twitter:site" content="@themepixels">
-    <meta name="twitter:creator" content="@themepixels">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="DashForge">
-    <meta name="twitter:description" content="Responsive Bootstrap 4 Dashboard Template">
-    <meta name="twitter:image" content="http://themepixels.me/dashforge/img/dashforge-social.png">
-
-    <!-- Facebook -->
-    <meta property="og:url" content="http://themepixels.me/dashforge">
-    <meta property="og:title" content="DashForge">
-    <meta property="og:description" content="Responsive Bootstrap 4 Dashboard Template">
-
-    <meta property="og:image" content="http://themepixels.me/dashforge/img/dashforge-social.png">
-    <meta property="og:image:secure_url" content="http://themepixels.me/dashforge/img/dashforge-social.png">
-    <meta property="og:image:type" content="image/png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="600">
-
-    <!-- Meta -->
-    <meta name="description" content="Responsive Bootstrap 4 Dashboard Template">
-    <meta name="author" content="ThemePixels">
-
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.png' %}">
 
@@ -78,8 +55,10 @@
             {#                        </ul>#}
             {#                      </li>#}
 
-            <li class="nav-item"><a href="{% url 'kajian:kajian_list' %}" class="nav-link"><i data-feather="box"></i>Daftar Kajian</a></li>
-            <li class="nav-item"><a href="{% url 'data:home' %}" class="nav-link"><i data-feather="box"></i>Data BPS</a></li>
+            <li class="nav-item"><a href="{% url 'kajian:kajian_list' %}" class="nav-link"><i data-feather="box"></i>Daftar
+                Kajian</a></li>
+            <li class="nav-item"><a href="{% url 'data:home' %}" class="nav-link"><i data-feather="box"></i>Data BPS</a>
+            </li>
 
 
             {#          <li class="nav-item active"><a href="index.html" class="nav-link"><i data-feather="box"></i> Daftar Kajian</a></li>#}
@@ -134,7 +113,13 @@
     <div class="sidebar-body">
         <ul class="sidebar-nav">
             <li class="nav-label mg-b-15">Browse Components</li>
-            {% block sidebar %}{% endblock %}
+            {% block sidebar %}
+                {% if 'data' in request.resolver_match.app_name %}
+                    {% include 'content/data/sidebar_data.html' %}
+                {% elif 'kajian' in request.resolver_match.app_name %}
+                    {% include 'content/kajian/sidebar_kajian.html' %}
+                {% endif %}
+            {% endblock %}
             {#            <li class="nav-label mg-b-15">Browse Components</li>#}
             {#            <li class="nav-item"><a href="index.html" class="nav-link"><i data-feather="layout"></i> Introduction</a>#}
             {#            </li>#}
@@ -146,7 +131,12 @@
 </div><!-- sidebar -->
 <div class="content content-components">
 
-    {% block content %}{% endblock %}
+    {% block content %}
+        {#        {% with request.resolver_match.url_name as active %}#}
+        {#            {% include 'content.html' %}#}
+        {#        {% endwith %}#}
+
+    {% endblock %}
 </div><!-- content -->
 </body>
 

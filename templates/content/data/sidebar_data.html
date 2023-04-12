@@ -1,0 +1,16 @@
+<li class="nav-item"><a
+        class="nav-link {% if request.resolver_match.app_name == 'data' and request.resolver_match.url_name == 'home' %} active {% endif %}"
+        href="{% url 'data:home' %}" class="nav-link">Halaman Data</a></li>
+<li class="nav-item"><a
+        class="nav-link {% if request.resolver_match.app_name == 'data' and request.resolver_match.url_name == 'infografis' %} active {% endif %}"
+        href="{% url 'data:infografis' %}" class="nav-link">Infografis</a>
+</li>
+<li class="nav-item"><a
+        class="nav-link {% if request.resolver_match.app_name == 'data' and request.resolver_match.url_name == 'press' %} active {% endif %}"
+        href="{% url 'data:press' %}"></i>Siaran Pers</a>
+</li>
+
+<li class="nav-item"><a
+        class="nav-link {% if request.resolver_match.app_name == 'data' and request.resolver_match.url_name == 'subject' %} active {% endif %}"
+        href="{% url 'data:subject' %}"></i>Subjek</a>
+</li>

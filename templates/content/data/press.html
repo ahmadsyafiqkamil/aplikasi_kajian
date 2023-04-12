@@ -7,14 +7,6 @@
     <link href="{% static 'lib/datatables.net-responsive-dt/css/responsive.dataTables.min.css' %}" rel="stylesheet">
     <link href="{% static 'lib/select2/css/select2.min.css' %}" rel="stylesheet">
 {% endblock %}
-{% block sidebar %}
-
-    <li class="nav-item"><a class="nav-link " href="{% url 'data:home' %}" class="nav-link">Halaman Data</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'data:infografis' %}" class="nav-link">Infografis</a>
-    </li>
-    <li class="nav-item"><a class="nav-link active" href="{% url 'data:press' %}"></i>Siaran Pers</a>
-    </li>
-{% endblock %}
 {% block content %}
     <div class="container">
         <div data-label="Daftar Infografis" class="df-example demo-table">

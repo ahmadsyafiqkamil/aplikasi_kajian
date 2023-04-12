@@ -9,7 +9,7 @@
 {% endblock %}
 {% block content %}
     <div class="container">
-        <div data-label="Daftar Infografis" class="df-example demo-table">
+        <div data-label="Daftar Subyek" class="df-example demo-table">
 
             <form method="post" id="search-form">
                 {% csrf_token %}
@@ -21,9 +21,8 @@
                 <thead>
                 <tr>
                     <th>Judul</th>
-                    <th>Kategori</th>
-                    <th>Image</th>
-                    <th>Download Link</th>
+                    <th>Kategori Subyek</th>
+                    <th>Jumlah Tabel</th>
                 </tr>
                 </thead>
             </table>
@@ -71,7 +70,7 @@
                     serverSide: true,
 
                     ajax: {
-                        url: "/data_get_infografis/",
+                        url: "{% url 'data:get_subject' %}",
                         type: 'POST',
                         async: true,
                         data: {
@@ -82,25 +81,23 @@
                     },
                     "columns": [
                         {"data": "title"},
-                        {"data": "category"},
+                        {"data": "subcat"},
                         {
-                            "data": "img",
+                            "data": "ntabel",
                             "render": function (data, type, full, meta) {
-                                return '<img src="' + data + '" height="50"/>';
+
+                                if (data === null) {
+                                    return 0;
+                                } else {
+                                    return data;
+                                }
                             }
                         },
-                        {
-                            "data": "dl",
-                            "render": function (data, type, full, meta) {
-                                return '<a href="' + data + '">Download</a>';
-                            }
-                        }
+
                     ],
 
                 })
             }
-
-
         });
     </script>
 {% endblock %}
