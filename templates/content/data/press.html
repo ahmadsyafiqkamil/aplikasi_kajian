@@ -1,0 +1,201 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block css %}
+    <link href="{% static 'lib/select2/css/select2.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/ion-rangeslider/css/ion.rangeSlider.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/datatables.net-dt/css/jquery.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/datatables.net-responsive-dt/css/responsive.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/select2/css/select2.min.css' %}" rel="stylesheet">
+{% endblock %}
+{% block sidebar %}
+
+    <li class="nav-item"><a class="nav-link " href="{% url 'data:home' %}" class="nav-link">Halaman Data</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'data:infografis' %}" class="nav-link">Infografis</a>
+    </li>
+    <li class="nav-item"><a class="nav-link active" href="{% url 'data:press' %}"></i>Siaran Pers</a>
+    </li>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div data-label="Daftar Infografis" class="df-example demo-table">
+
+            <form method="post" id="search-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" id="search-button" class="btn btn-primary">Cari</button>
+            </form>
+            <br>
+            <table id="example4" class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tanggal Rilis</th>
+                    <th>Subjek</th>
+                    <th>Judul</th>
+                    <th>Download PDF</th>
+                    <th>Aksi</th>
+                </tr>
+                </thead>
+            </table>
+        </div><!-- df-example -->
+    </div>
+
+    <div id="modal" class="modal fade bd-lg" id="projectModal" tabindex="-1" role="dialog"
+         aria-labelledby="projectModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="projectModalLabel">Data </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveBtn">Save changes</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block js %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"></script>
+    <script src="{% static 'lib/prismjs/prism.js' %}"></script>
+    <script src="{% static 'lib/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-dt/js/dataTables.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-responsive-dt/js/responsive.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/select2/js/select2.min.js' %}"></script>
+    <script src="{% static 'lib/jqueryui/jquery-ui.min.js' %}"></script>
+    <script>
+        $(function () {
+            'use strict'
+            {#$('#search-form').serialize()#}
+
+            $('.select2').select2({
+                placeholder: 'Choose one',
+                searchInputPlaceholder: 'Search options'
+
+            });
+            $('#search-form').submit(function (event) {
+                event.preventDefault(); // hindari form submit secara normal
+                var domain = $('#id_domain').val();
+                populateDataTable(domain);
+
+            });
+
+            function populateDataTable(domain) {
+                if ($.fn.DataTable.isDataTable('#example4')) {
+                    $('#example4').DataTable().clear().destroy();
+                }
+                var table = $('#example4').DataTable({
+                    ordering: false,
+                    responsive: true,
+                    processing: true,
+                    serverSide: true,
+
+                    ajax: {
+                        url: "/data_get_press/",
+                        type: 'POST',
+                        async: true,
+                        data: {
+                            "domain": domain,
+                            'page': 1,
+                            "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
+                        }
+                    },
+                    "columns": [
+                        {"data": "brs_id"},
+                        {
+                            "data": "rl_date",
+                            "render": function (data, type, full, meta) {
+                                return moment(data).format('DD/MM/YYYY');
+                            }
+                        },
+                        {"data": "subj"},
+                        {"data": "title"},
+                        {
+                            "data": "pdf",
+                            "render": function (data, type, full, meta) {
+                                return '<a href="' + data + '">Download</a>';
+                            }
+                        },
+                        {
+                            "data": "brs_id",
+                            "render": function (data, type, row, meta) {
+                                return ' <a href="#" onclick="openModal(' + data + ', \'' + String(domain) + '\')">Lihat Detail Rilis</a>';
+                            }, "searchable": true
+                        }
+                    ],
+
+                })
+            }
+
+
+        });
+
+        function openModal(data, domain) {
+            {#$('#modal').modal('show');#}
+            if ($.fn.DataTable.isDataTable('#table_modal')) {
+                $('#table_modal').DataTable().clear().destroy();
+            }
+            $.post({
+                url: {% url 'data:get_view_press' %},
+                data: {
+                    "domain": domain,
+                    "id": data,
+                    "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
+                },
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response.data)
+                    var modalWidth = $('.modal').width();
+                    var modalHeight = $('.modal').height();
+
+                    var data = response.data
+                    $('#projectModalLabel').text('Data ' + data.title);
+                    // set modal body content
+                    var modalBody = $('#modal .modal-body');
+                    modalBody.empty(); // clear any previous content
+                    // append new content
+                    modalBody.append('<p>Abstrak</p>');
+                    modalBody.append('<p>' + data.abstract + '</p>');
+                    modalBody.append('<p><a href="' + data.pdf + '">Download PDF</a></p>');
+                    modalBody.append('<p><img width="400px" height="400px" src="' + data.thumbnail + '"/></p>');
+                    modalBody.append('<p><a  href="' + data.pdf + '">Download PDF</a></p>');
+
+                    modalBody.append("Rilis terkait");
+                    for (let key in data.related) {
+                        modalBody.append('<p><b> ID BRS' + data.related[key].brs_id + '</b></p>');
+                        modalBody.append('<p> Abstrak: ' + data.related[key].abstract + '<p>');
+                        modalBody.append('<p><img width="400px" height="400px" src="' + data.related[key].thumbnail + '"/></p>');
+                        modalBody.append('<p><a href="' + data.related[key].pdf + '">Download PDF</a></p>');
+                    }
+
+                    // show modal
+                    $('#modal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    // handle error
+                }
+            });
+
+
+        }
+
+
+    </script>
+{% endblock %}
+
+
+
+
+
+

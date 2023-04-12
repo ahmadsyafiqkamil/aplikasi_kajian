@@ -78,19 +78,9 @@
             {#                        </ul>#}
             {#                      </li>#}
 
-            <li class="nav-item"><a href="{% url 'kajian:kajian_list' %}" class="nav-link"><i data-feather="box"></i>Daftar
-                Kajian</a></li>
-            <li class="nav-item with-sub">
-                <a href="" class="nav-link"><i data-feather="pie-chart"></i>Data BPS</a>
-                <ul class="navbar-menu-sub">
-                    <li class="nav-sub-item"><a href="{% url 'data:infografis' %}" class="nav-sub-link">Infografis
-                        BPS</a></li>
-                    <li class="nav-sub-item"><a href="{% url 'data:berita' %}" class="nav-sub-link">Siaran Pers</a>
-                    <li class="nav-sub-item"><a href="{% url 'data:berita' %}" class="nav-sub-link">Berita BPS</a>
-                    </li>
+            <li class="nav-item"><a href="{% url 'kajian:kajian_list' %}" class="nav-link"><i data-feather="box"></i>Daftar Kajian</a></li>
+            <li class="nav-item"><a href="{% url 'data:home' %}" class="nav-link"><i data-feather="box"></i>Data BPS</a></li>
 
-                </ul>
-            </li>
 
             {#          <li class="nav-item active"><a href="index.html" class="nav-link"><i data-feather="box"></i> Daftar Kajian</a></li>#}
         </ul>
@@ -143,12 +133,13 @@
     </div><!-- sidebar-header -->
     <div class="sidebar-body">
         <ul class="sidebar-nav">
+            <li class="nav-label mg-b-15">Browse Components</li>
             {% block sidebar %}{% endblock %}
-{#            <li class="nav-label mg-b-15">Browse Components</li>#}
-{#            <li class="nav-item"><a href="index.html" class="nav-link"><i data-feather="layout"></i> Introduction</a>#}
-{#            </li>#}
-{#            <li class="nav-item"><a href="grid.html" class="nav-link active"><i data-feather="grid"></i> Grid System</a>#}
-{#            </li>#}
+            {#            <li class="nav-label mg-b-15">Browse Components</li>#}
+            {#            <li class="nav-item"><a href="index.html" class="nav-link"><i data-feather="layout"></i> Introduction</a>#}
+            {#            </li>#}
+            {#            <li class="nav-item"><a href="grid.html" class="nav-link active"><i data-feather="grid"></i> Grid System</a>#}
+            {#            </li>#}
 
         </ul>
     </div><!-- sidebar-body -->

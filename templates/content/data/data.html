@@ -3,6 +3,13 @@
 {% block css %}
 
 {% endblock %}
+{% block sidebar %}
+    <li class="nav-item"><a class="nav-link active" href="{% url 'data:home' %}" class="nav-link">Halaman Data</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'data:infografis' %}" class="nav-link">Infografis</a>
+    </li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'data:press' %}"></i>Siaran Pers</a>
+    </li>
+{% endblock %}
 {% block content %}
 
     <div class="container">
@@ -10,28 +17,28 @@
 
         <div class="df-example">
             <div class="row mt-4">
-            <div class="col-md-4 offset-md-4">
-                <form>
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="submit">Search</button>
+                <div class="col-md-4 offset-md-4">
+                    <form>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">Search</button>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
 
-        <!-- Baris kedua: List hasil input -->
-        <div class="row mt-4">
-            <div class="col-md-8 offset-md-2">
-                <ul class="list-group">
-                    <li class="list-group-item">Hasil Pencarian 1</li>
-                    <li class="list-group-item">Hasil Pencarian 2</li>
-                    <li class="list-group-item">Hasil Pencarian 3</li>
-                </ul>
+            <!-- Baris kedua: List hasil input -->
+            <div class="row mt-4">
+                <div class="col-md-8 offset-md-2">
+                    <ul class="list-group">
+                        <li class="list-group-item">Hasil Pencarian 1</li>
+                        <li class="list-group-item">Hasil Pencarian 2</li>
+                        <li class="list-group-item">Hasil Pencarian 3</li>
+                    </ul>
+                </div>
             </div>
-        </div>
 
         </div>
 

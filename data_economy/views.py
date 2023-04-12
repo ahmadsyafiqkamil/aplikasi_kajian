@@ -42,37 +42,37 @@ def get_infografis(request):
         return HttpResponse("Invalid request method")
 
 
-def get_list_data(request):
-    pass
+class PressReleaseView(LoginRequiredMixin, generic.TemplateView):
+    template_name = "content/data/press.html"
 
-# class ListData(LoginRequiredMixin, generic.TemplateView):
-#     template_name = "content/data/list.html"
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         subject = kwargs.get("sbj")
-#
-#         match subject:
-#             case "infographic":
-#                 columns = [
-#                     {"data": "title"},
-#                     {"data": "category"},
-#                     {
-#                         "data": "img",
-#                         "render": "function (data, type, full, meta) { return '<img src=\"' + data + '\" height=\"50\"/>'; }"
-#                     },
-#                     {
-#                         "data": "dl",
-#                         "render": "function (data, type, full, meta) { return '<a href=\"' + data + '\">Download</a>'; }"
-#                     }
-#                 ]
-#                 context['columns'] = columns
-#                 context['form'] = DomainSearchForm()
-#                 context["th"] = """
-#                     <th>Judul</th>
-#                     <th>Kategori</th>
-#                     <th>Image</th>
-#                     <th>Download Link</th>
-#                 """
-#                 context["datatable_url"] = "/data_get_infografis/"
-#                 return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = DomainSearchForm()
+        return context
+
+
+def get_press_release(request):
+    if request.method == 'POST':
+        api = API()
+        domain = request.POST.get('domain')
+        # page = request.POST.get('page')
+        draw = int(request.POST.get('draw'))
+        # start = int(request.POST.get('start'))
+        # length = int(request.POST.get('length'))
+        data = api.get_list(domain=domain, model="pressrelease", page=draw)
+        return JsonResponse(data, safe=False)
+    else:
+        return HttpResponse("Invalid request method")
+
+
+def get_view_press(request):
+    if request.method == "POST":
+        id = request.POST.get('id')
+        domain = request.POST.get('domain')
+        print(id, domain)
+        api = API()
+        data = api.get_view(id=id, domain=domain, model="pressrelease")
+        print(data)
+        return JsonResponse(data, safe=False)
+    else:
+        return HttpResponse("Invalid request method")
