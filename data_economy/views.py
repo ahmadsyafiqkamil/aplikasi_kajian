@@ -98,3 +98,24 @@ def get_subject(request):
         return JsonResponse(info, safe=False)
     else:
         return HttpResponse("Invalid request method")
+
+
+class DynamicData(LoginRequiredMixin, generic.TemplateView):
+    template_name = "content/data/data_dinamis.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['subject_form'] = SubjectSearchForm()
+        context['domain_form'] = DomainSearchForm()
+        return context
+
+
+def get_data(request):
+    if request.method == "POST":
+        api = API()
+        domain = request.POST.get('domain')
+        subject = request.POST.get('subject')
+        data = api.get_list(domain=domain, model="data", subject=subject)
+        return JsonResponse(data, safe=False)
+    else:
+        return HttpResponse("Invalid request method")

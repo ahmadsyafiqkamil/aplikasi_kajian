@@ -94,13 +94,70 @@ class KabDomain(models.Model):
         db_table = "tbl_kab_domain"
 
 
-class Subject(models.Model):
-    sub_id = models.IntegerField( verbose_name="sub_id", primary_key=True)
-    title = models.CharField(max_length=250, null=True, blank=True)
-    subcat_id = models.CharField(max_length=10, null=True, blank=True)
-    subcat = models.CharField(max_length=250, null=True, blank=True)
-
-
 class SubjectCategory(models.Model):
     subcat_id = models.CharField(max_length=4, verbose_name="subcat_id", primary_key=True)
     title = models.CharField(max_length=250, null=True, blank=True)
+
+
+class Subject(models.Model):
+    sub_id = models.IntegerField(verbose_name="sub_id", primary_key=True)
+    title = models.CharField(max_length=250, null=True, blank=True)
+    subcat_id = models.ForeignKey(SubjectCategory, on_delete=models.CASCADE)
+    subcat = models.CharField(max_length=250, null=True, blank=True)
+    ntabel = models.CharField(max_length=10, null=True, blank=True)
+
+    def __str__(self):
+        return self.title + " (" + self.subcat + ")"
+
+
+class Vervar(models.Model):
+    kode_ver_id = models.IntegerField(verbose_name="kode_ver_id", null=True, blank=True)
+    vervar = models.CharField(max_length=500, null=True, blank=True)
+    item_ver_id = models.CharField(max_length=10, null=True, blank=True)
+    group_ver_id = models.CharField(max_length=10, null=True, blank=True)
+    name_group_ver_id = models.CharField(max_length=250, null=True, blank=True)
+
+    def __str__(self):
+        return self.vervar + " (" + self.name_group_ver_id + ")"
+
+
+class Turth(models.Model):
+    turth_id = models.IntegerField(verbose_name="turth_id", null=True, blank=True)
+    turth = models.CharField(max_length=250, null=True, blank=True)
+    group_turth_id = models.CharField(max_length=10, null=True, blank=True)
+    name_group_turth = models.CharField(max_length=250, null=True, blank=True)
+
+    def __str__(self):
+        return self.turth + " (" + self.name_group_turth + ")"
+
+
+class Variable(models.Model):
+    var_id = models.IntegerField(verbose_name="var_id", null=True, blank=True)
+    title = models.CharField(max_length=250, null=True, blank=True)
+    sub_id = models.CharField(max_length=10, null=True, blank=True)
+    sub_name = models.CharField(max_length=250, null=True, blank=True)
+    def_name = models.TextField(null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
+    vertical = models.CharField(max_length=250, null=True, blank=True)
+    unit = models.CharField(max_length=250, null=True, blank=True)
+    graph_id = models.CharField(max_length=250, null=True, blank=True)
+    graph_name = models.CharField(max_length=250, null=True, blank=True)
+
+    def __str__(self):
+        return self.title + " (" + self.sub_name + ")"
+
+
+class Unit(models.Model):
+    unit_id = models.IntegerField(verbose_name="unit_id", null=True, blank=True)
+    unit = models.CharField(max_length=250, null=True, blank=True)
+
+    def __str__(self):
+        return self.unit
+
+
+class Period(models.Model):
+    th_id = models.IntegerField(verbose_name="th_id", null=True, blank=True)
+    th = models.CharField(max_length=250, null=True, blank=True)
+
+    def __str__(self):
+        return self.th_id

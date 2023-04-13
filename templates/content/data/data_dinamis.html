@@ -9,25 +9,16 @@
 {% endblock %}
 {% block content %}
     <div class="container">
-        <div data-label="Daftar Subyek" class="df-example demo-table">
+        <div data-label="Data Dinamis" class="df-example demo-table">
 
             <form method="post" id="search-form">
                 {% csrf_token %}
-                {{ form.as_p }}
+                {{ domain_form.as_p }}
+                {{ subject_form.as_p }}
                 <button type="submit" id="search-button" class="btn btn-primary">Cari</button>
             </form>
             <br>
-            <table id="example4" class="table">
-                <thead>
-                <tr>
-                    <th>ID Subyek</th>
-                    <th>Judul</th>
-                    <th>Kategori Subyek</th>
-                    <th>Jumlah Tabel</th>
-                </tr>
-                </thead>
-            </table>
-            <div id="pagination"></div>
+
         </div><!-- df-example -->
     </div>
 
@@ -56,50 +47,26 @@
             $('#search-form').submit(function (event) {
                 event.preventDefault(); // hindari form submit secara normal
                 var domain = $('#id_domain').val();
-                populateDataTable(domain);
+                var subject = $('#id_subject').val();
 
-            });
-
-            function populateDataTable(domain) {
-                if ($.fn.DataTable.isDataTable('#example4')) {
-                    $('#example4').DataTable().clear().destroy();
-                }
-                var table = $('#example4').DataTable({
-                    ordering: false,
-                    responsive: true,
-                    processing: true,
-                    serverSide: true,
-
-                    ajax: {
-                        url: "{% url 'data:get_subject' %}",
-                        type: 'POST',
-                        async: true,
-                        data: {
-                            "domain": domain,
-                            'page': 1,
-                            "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
-                        }
+                $.post({
+                    url: {% url 'data:get_view_press' %},
+                    data: {
+                        "domain": domain,
+                        "subject": subject,
+                        "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
                     },
-                    "columns": [
-                        {"data": "sub_id"},
-                        {"data": "title"},
-                        {"data": "subcat"},
-                        {
-                            "data": "ntabel",
-                            "render": function (data, type, full, meta) {
-
-                                if (data === null) {
-                                    return 0;
-                                } else {
-                                    return data;
-                                }
-                            }
-                        },
-
-                    ],
+                    dataType: 'json',
+                    success: function (response) {
+                    },
+                    error: function (xhr, status, error) {
+                        // handle error
+                    }
 
                 })
-            }
+            });
+
+
         });
     </script>
 {% endblock %}
