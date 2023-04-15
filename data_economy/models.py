@@ -110,6 +110,22 @@ class Subject(models.Model):
         return self.title + " (" + self.subcat + ")"
 
 
+class Variable(models.Model):
+    var_id = models.IntegerField(verbose_name="var_id", primary_key=True)
+    title = models.CharField(max_length=250, null=True, blank=True)
+    sub_id = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    sub_name = models.CharField(max_length=250, null=True, blank=True)
+    def_name = models.TextField(null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
+    vertical = models.CharField(max_length=250, null=True, blank=True)
+    unit = models.CharField(max_length=250, null=True, blank=True)
+    graph_id = models.CharField(max_length=250, null=True, blank=True)
+    graph_name = models.CharField(max_length=250, null=True, blank=True)
+
+    def __str__(self):
+        return self.title + " (" + self.sub_name + ")"
+
+
 class Vervar(models.Model):
     kode_ver_id = models.IntegerField(verbose_name="kode_ver_id", null=True, blank=True)
     vervar = models.CharField(max_length=500, null=True, blank=True)
@@ -129,22 +145,6 @@ class Turth(models.Model):
 
     def __str__(self):
         return self.turth + " (" + self.name_group_turth + ")"
-
-
-class Variable(models.Model):
-    var_id = models.IntegerField(verbose_name="var_id", null=True, blank=True)
-    title = models.CharField(max_length=250, null=True, blank=True)
-    sub_id = models.CharField(max_length=10, null=True, blank=True)
-    sub_name = models.CharField(max_length=250, null=True, blank=True)
-    def_name = models.TextField(null=True, blank=True)
-    notes = models.TextField(null=True, blank=True)
-    vertical = models.CharField(max_length=250, null=True, blank=True)
-    unit = models.CharField(max_length=250, null=True, blank=True)
-    graph_id = models.CharField(max_length=250, null=True, blank=True)
-    graph_name = models.CharField(max_length=250, null=True, blank=True)
-
-    def __str__(self):
-        return self.title + " (" + self.sub_name + ")"
 
 
 class Unit(models.Model):

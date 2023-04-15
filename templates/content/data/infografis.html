@@ -57,7 +57,6 @@
                 event.preventDefault(); // hindari form submit secara normal
                 var domain = $('#id_domain').val();
                 populateDataTable(domain);
-
             });
 
             function populateDataTable(domain) {
@@ -69,15 +68,22 @@
                     responsive: true,
                     processing: true,
                     serverSide: true,
-
                     ajax: {
                         url: "/data_get_infografis/",
                         type: 'POST',
                         async: true,
                         data: {
                             "domain": domain,
-                            'page': 1,
                             "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
+                        },
+                        dataSrc: function (json) {
+                            if (json.data === "no_data") {
+                                // Tampilkan pesan jika data kosong
+                                alert("Data tidak tersedia");
+                                return [];
+                            } else {
+                                return json.data;
+                            }
                         }
                     },
                     "columns": [

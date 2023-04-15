@@ -76,8 +76,16 @@
                         async: true,
                         data: {
                             "domain": domain,
-                            'page': 1,
                             "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
+                        },
+                        dataSrc: function (json) {
+                            if (json.data === "no_data") {
+                                // Tampilkan pesan jika data kosong
+                                alert("Data tidak tersedia");
+                                return [];
+                            } else {
+                                return json.data;
+                            }
                         }
                     },
                     "columns": [

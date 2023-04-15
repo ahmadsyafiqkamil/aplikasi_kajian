@@ -19,6 +19,40 @@
             </form>
             <br>
 
+
+            <table id="example4" class="table">
+                <thead>
+                <tr>
+                    <th>Variabel</th>
+                    <th>Aksi</th>
+                </tr>
+                </thead>
+            </table>
+            <br>
+            <div class="row">
+                <div class="col-md-6">
+                    <table id="turvar" class="table">
+                        <thead>
+                        <tr>
+                            <th>Karakteristik</th>
+                            <th>Aksi</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table id="turth" class="table">
+                        <thead>
+                        <tr>
+                            <th>Waktu</th>
+                            <th>Aksi</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+
         </div><!-- df-example -->
     </div>
 
@@ -42,32 +76,235 @@
             $('.select2').select2({
                 placeholder: 'Choose one',
                 searchInputPlaceholder: 'Search options'
-
             });
-            $('#search-form').submit(function (event) {
+
+
+            $("#id_subject").prop("disabled", true); // menonaktifkan select2 kedua saat halaman dimuat
+            $('#search-button').hide();
+            $('#example4').hide();
+            $('#turvar').hide();
+
+
+
+            $("#id_domain").change(function () { // menambahkan event change pada select2 pertama
+                if ($(this).val() != "") { // jika select2 pertama dipilih
+                    $("#id_subject").prop("disabled", false); // mengaktifkan select2 kedua
+                } else {
+                    $("#id_subject").prop("disabled", true); // menonaktifkan select2 kedua jika select2 pertama tidak dipilih
+                    $('#id_subject').val('');
+                }
+            });
+
+            $("#id_subject").change(function (event) {
                 event.preventDefault(); // hindari form submit secara normal
                 var domain = $('#id_domain').val();
                 var subject = $('#id_subject').val();
 
-                $.post({
-                    url: {% url 'data:get_view_press' %},
-                    data: {
-                        "domain": domain,
-                        "subject": subject,
-                        "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
+                $('#example4').show();
+                $('#turvar').show();
+                $('#turth').show();
+
+                $('#search-button').show();
+                console.log(domain, subject)
+                if ($.fn.DataTable.isDataTable('#example4')) {
+                    $('#example4').DataTable().clear().destroy();
+                }
+
+                var table = $('#example4').DataTable({
+                    ordering: false,
+                    responsive: true,
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        url: "/data_get_data/",
+                        type: 'POST',
+                        async: true,
+                        data: {
+                            "domain": domain,
+                            "subject": subject,
+                            "model": "var",
+                            "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
+                        },
+                        dataSrc: function (json) {
+                            if (json.data === "no_data") {
+                                // Tampilkan pesan jika data kosong
+                                alert("Data tidak tersedia");
+                                return [];
+                            } else {
+                                return json.data;
+                            }
+                        }
                     },
-                    dataType: 'json',
-                    success: function (response) {
-                    },
-                    error: function (xhr, status, error) {
-                        // handle error
-                    }
+                    "columns": [
+                        {
+                            "data": "title",
+                            render: function (data, type, row) {
+                                return '<span style="white-space:normal">' + data + "</span>";
+                            }
+                        },
+
+                        {
+                            "data": "var_id",
+                            "render": function (data, type, row, meta) {
+                                var idString = data.toString(); // konversi data ke dalam bentuk string
+                                var domainString = "'" + domain.toString() + "'"; // konversi domain ke dalam bentuk string dan tambahkan tanda kutip pada awal dan akhir
+                                return '<a href="#" onclick="sendturvar(' + idString + ',' + domainString + '); sendturth(' + idString + ',' + domainString + ')">' + idString + '</a>';
+                            }
+                        },
+
+                    ],
 
                 })
+
+
             });
 
 
         });
+
+        function sendturth(id_turvar, domain) {
+            console.log(id_turvar, domain)
+            if ($.fn.DataTable.isDataTable('#turth')) {
+                $('#turth').DataTable().clear().destroy();
+            }
+            var table = $('#turth').DataTable({
+                ordering: false,
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "/data_get_data/",
+                    type: 'POST',
+                    async: true,
+                    data: {
+                        "domain": domain,
+                        "model": "turth",
+                        "id_var": id_turvar,
+                        "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    dataSrc: function (json) {
+                        if (json.data === "no_data") {
+                            // Tampilkan pesan jika data kosong
+                            alert("Data tidak tersedia");
+                            return [];
+                        } else {
+                            return json.data;
+                        }
+                    }
+                },
+                "columns": [
+                    {
+                        "data": "turth"
+                    },
+
+                    {
+                        "data": "turth_id",
+                        "render": function (data, type, row, meta) {
+                            return '<a href="#">' + data + '</a>';
+                        }
+                    },
+
+                ],
+
+            })
+        }
+
+        function sendturvar(id_turvar, domain) {
+            console.log(id_turvar, domain)
+            if ($.fn.DataTable.isDataTable('#turvar')) {
+                $('#turvar').DataTable().clear().destroy();
+            }
+            var table = $('#turvar').DataTable({
+                ordering: false,
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "/data_get_data/",
+                    type: 'POST',
+                    async: true,
+                    data: {
+                        "domain": domain,
+                        "model": "turvar",
+                        "id_var": id_turvar,
+                        "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    dataSrc: function (json) {
+                        if (json.data === "no_data") {
+                            // Tampilkan pesan jika data kosong
+                            alert("Data tidak tersedia");
+                            return [];
+                        } else {
+                            return json.data;
+                        }
+                    }
+                },
+                "columns": [
+                    {
+                        "data": "turvar"
+                    },
+
+                    {
+                        "data": "turvar_id",
+                        "render": function (data, type, row, meta) {
+                            return '<a href="#">' + data + '</a>';
+                        }
+                    },
+
+                ],
+
+            })
+        }
+
+
+        function sendVervar(id_vervar, domain) {
+            console.log(id_vervar, domain)
+            if ($.fn.DataTable.isDataTable('#vervar')) {
+                $('#vervar').DataTable().clear().destroy();
+            }
+            var table = $('#vervar').DataTable({
+                ordering: false,
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "/data_get_data/",
+                    type: 'POST',
+                    async: true,
+                    data: {
+                        "domain": domain,
+                        "model": "vervar",
+                        "id_var": id_vervar,
+                        "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    dataSrc: function (json) {
+                        if (json.data === "no_data") {
+                            // Tampilkan pesan jika data kosong
+                            alert("Data tidak tersedia");
+                            return [];
+                        } else {
+                            return json.data;
+                        }
+                    }
+                },
+                "columns": [
+                    {
+                        "data": "vervar"
+                    },
+
+                    {
+                        "data": "kode_ver_id",
+                        "render": function (data, type, row, meta) {
+                            return '<a href="#">' + data + '</a>';
+                        }
+                    },
+
+                ],
+
+            })
+
+
+        }
     </script>
 {% endblock %}
 

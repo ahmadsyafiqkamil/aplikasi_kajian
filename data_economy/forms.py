@@ -47,3 +47,36 @@ class TurthSearchForm(forms.Form):
             'class': 'form-control select2',
         })
     )
+
+
+class PeriodSearchForm(forms.Form):
+    subject = forms.ModelChoiceField(
+        label='Cari Periode ',
+        queryset=Period.objects.all(),
+
+        widget=forms.Select(attrs={
+            'class': 'form-control select2',
+        })
+    )
+
+
+class UnitSearchForm(forms.Form):
+    subject = forms.ModelChoiceField(
+        label='Cari Unit',
+        queryset=Unit.objects.all(),
+
+        widget=forms.Select(attrs={
+            'class': 'form-control select2',
+        })
+    )
+
+
+class VariableSearchForm(forms.Form):
+    subject = forms.ModelChoiceField(
+        label='Cari Variabel',
+        queryset=Variable.objects.all(),
+
+        widget=forms.Select(attrs={
+            'class': 'form-control select2',
+        })
+    )

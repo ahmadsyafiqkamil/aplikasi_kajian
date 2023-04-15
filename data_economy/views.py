@@ -31,7 +31,7 @@ def get_infografis(request):
     if request.method == 'POST':
         api = API()
         domain = request.POST.get('domain')
-        # page = request.POST.get('page')
+        page = request.POST.get('page')
         draw = int(request.POST.get('draw'))
         # start = int(request.POST.get('start'))
         # length = int(request.POST.get('length'))
@@ -55,7 +55,7 @@ def get_press_release(request):
     if request.method == 'POST':
         api = API()
         domain = request.POST.get('domain')
-        # page = request.POST.get('page')
+        page = request.POST.get('page')
         draw = int(request.POST.get('draw'))
         # start = int(request.POST.get('start'))
         # length = int(request.POST.get('length'))
@@ -89,7 +89,7 @@ def get_subject(request):
     if request.method == 'POST':
         api = API()
         domain = request.POST.get('domain')
-        # page = request.POST.get('page')
+        page = request.POST.get('page')
         draw = int(request.POST.get('draw'))
         # start = int(request.POST.get('start'))
         # length = int(request.POST.get('length'))
@@ -115,7 +115,46 @@ def get_data(request):
         api = API()
         domain = request.POST.get('domain')
         subject = request.POST.get('subject')
-        data = api.get_list(domain=domain, model="data", subject=subject)
-        return JsonResponse(data, safe=False)
+        model = request.POST.get('model')
+
+        match model:
+            case "var":
+                page = request.POST.get('page')
+                # draw = int(request.POST.get('draw'))
+                # start = int(request.POST.get('start'))
+                # length = int(request.POST.get('length'))
+                data = api.get_list(model=model, domain=domain, subject=subject, page=page)
+                print(data)
+                return JsonResponse(data, safe=False)
+
+            case 'turth':
+                page = request.POST.get('page')
+                id_var = request.POST.get('id_var')
+                # draw = int(request.POST.get('draw'))
+                # start = int(request.POST.get('start'))
+                # length = int(request.POST.get('length'))
+                data = api.get_list(model=model, domain=domain, id_var=id_var, page=page)
+                print(data)
+                return JsonResponse(data, safe=False)
+
+            case 'turvar':
+                page = request.POST.get('page')
+                id_var = request.POST.get('id_var')
+                # draw = int(request.POST.get('draw'))
+                # start = int(request.POST.get('start'))
+                # length = int(request.POST.get('length'))
+                data = api.get_list(model=model, domain=domain, id_var=id_var, page=page)
+                print(data)
+                return JsonResponse(data, safe=False)
+
+            case "vervar":
+                page = request.POST.get('page')
+                id_var = request.POST.get('id_var')
+                # draw = int(request.POST.get('draw'))
+                # start = int(request.POST.get('start'))
+                # length = int(request.POST.get('length'))
+                data = api.get_list(model=model, domain=domain, page=page, id_var=id_var)
+                print(data)
+                return JsonResponse(data, safe=False)
     else:
         return HttpResponse("Invalid request method")
