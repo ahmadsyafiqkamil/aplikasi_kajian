@@ -92,13 +92,15 @@ class API():
                 return dt
 
             case "data":
-                "https://webapi.bps.go.id/v1/api/list/model/data/domain/0000/var/56/turvar/1/th/1/turth/1/key/2ff0d1794d793a4be0a72124a029172f/"
+                "https://webapi.bps.go.id/v1/api/list/model/data/domain/0000/var/1/turvar/1/vervar/1/th/1/turth/1/key/2ff0d1794d793a4be0a72124a029172f/"
                 domain = kwargs.get('domain')
                 subject = kwargs.get('subject')
                 var_id = kwargs.get('var_id')
                 turth_id = kwargs.get('turth_id')
                 turvar_id = kwargs.get('turvar_id')
-                url = f"{self.url}list/model/{model}/domain/{domain}/var/{var_id}/turvar/{turvar_id}/th/{turth_id}/key/{self.key}"
+                th_id = kwargs.get('th_id')
+                vervar_id = kwargs.get('vervar_id')
+                url = f"{self.url}list/model/{model}/domain/{domain}/var/{var_id}/turvar/{turvar_id}/vervar/{vervar_id}/th/{th_id}/turth/{turth_id}/key/{self.key}"
                 print(url)
                 data = requests.get(url).json()
                 # dt = self.data_transform(data)
@@ -118,10 +120,8 @@ class API():
                 return data
 
     def data_transform(self, data):
-        print(data)
         if data["data-availability"] == "available":
             dt = {
-                "draw": data["data"][0]["page"],
                 "recordsTotal": data["data"][0]["total"],
                 "recordsFiltered": data["data"][0]["total"],
                 "data": data["data"][1],

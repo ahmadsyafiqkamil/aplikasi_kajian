@@ -29,14 +29,15 @@ class BeritaView(LoginRequiredMixin, generic.TemplateView):
 
 def get_infografis(request):
     if request.method == 'POST':
+        print(request.POST)
         api = API()
         domain = request.POST.get('domain')
-        page = request.POST.get('page')
         draw = int(request.POST.get('draw'))
-        # start = int(request.POST.get('start'))
-        # length = int(request.POST.get('length'))
-        info = api.get_list(domain=domain, model="infographic", page=draw)
-        print(info)
+        start = int(request.POST.get('start'))
+        length = int(request.POST.get('length'))
+        page = start // length + 1
+        info = api.get_list(domain=domain, model="infographic", page=page)
+        info.update({"draw": draw})
         return JsonResponse(info, safe=False)
     else:
         return HttpResponse("Invalid request method")
@@ -55,11 +56,12 @@ def get_press_release(request):
     if request.method == 'POST':
         api = API()
         domain = request.POST.get('domain')
-        page = request.POST.get('page')
         draw = int(request.POST.get('draw'))
-        # start = int(request.POST.get('start'))
-        # length = int(request.POST.get('length'))
-        data = api.get_list(domain=domain, model="pressrelease", page=draw)
+        start = int(request.POST.get('start'))
+        length = int(request.POST.get('length'))
+        page = start // length + 1
+        data = api.get_list(domain=domain, model="pressrelease", page=page)
+        data.update({"draw": draw})
         return JsonResponse(data, safe=False)
     else:
         return HttpResponse("Invalid request method")
@@ -89,13 +91,13 @@ def get_subject(request):
     if request.method == 'POST':
         api = API()
         domain = request.POST.get('domain')
-        page = request.POST.get('page')
         draw = int(request.POST.get('draw'))
-        # start = int(request.POST.get('start'))
-        # length = int(request.POST.get('length'))
-        info = api.get_list(domain=domain, model="subject", page=draw)
-        print(info)
-        return JsonResponse(info, safe=False)
+        start = int(request.POST.get('start'))
+        length = int(request.POST.get('length'))
+        page = start // length + 1
+        data = api.get_list(domain=domain, model="subject", page=page)
+        data.update({"draw": draw})
+        return JsonResponse(data, safe=False)
     else:
         return HttpResponse("Invalid request method")
 
@@ -117,54 +119,41 @@ def get_data(request):
         subject = request.POST.get('subject')
         model = request.POST.get('model')
 
+        draw = int(request.POST.get('draw'))
+        start = int(request.POST.get('start'))
+        length = int(request.POST.get('length'))
+        page = start // length + 1
+
         match model:
             case "var":
-                page = request.POST.get('page')
-                # draw = int(request.POST.get('draw'))
-                # start = int(request.POST.get('start'))
-                # length = int(request.POST.get('length'))
+
                 data = api.get_list(model=model, domain=domain, subject=subject, page=page)
-                print(data)
+                data.update({"draw": draw})
                 return JsonResponse(data, safe=False)
 
             case 'turth':
-                page = request.POST.get('page')
                 id_var = request.POST.get('id_var')
-                # draw = int(request.POST.get('draw'))
-                # start = int(request.POST.get('start'))
-                # length = int(request.POST.get('length'))
+
                 data = api.get_list(model=model, domain=domain, id_var=id_var, page=page)
-                print(data)
+                data.update({"draw": draw})
                 return JsonResponse(data, safe=False)
 
             case 'th':
-                page = request.POST.get('page')
                 id_var = request.POST.get('id_var')
-                # draw = int(request.POST.get('draw'))
-                # start = int(request.POST.get('start'))
-                # length = int(request.POST.get('length'))
                 data = api.get_list(model=model, domain=domain, id_var=id_var, page=page)
-                print(data)
+                data.update({"draw": draw})
                 return JsonResponse(data, safe=False)
 
             case 'turvar':
-                page = request.POST.get('page')
                 id_var = request.POST.get('id_var')
-                # draw = int(request.POST.get('draw'))
-                # start = int(request.POST.get('start'))
-                # length = int(request.POST.get('length'))
                 data = api.get_list(model=model, domain=domain, id_var=id_var, page=page)
-                print(data)
+                data.update({"draw": draw})
                 return JsonResponse(data, safe=False)
 
             case "vervar":
-                page = request.POST.get('page')
                 id_var = request.POST.get('id_var')
-                # draw = int(request.POST.get('draw'))
-                # start = int(request.POST.get('start'))
-                # length = int(request.POST.get('length'))
                 data = api.get_list(model=model, domain=domain, page=page, id_var=id_var)
-                print(data)
+                data.update({"draw": draw})
                 return JsonResponse(data, safe=False)
 
             case 'data':
@@ -173,10 +162,12 @@ def get_data(request):
                 var_id = request.POST.get('var_id')
                 th_id = request.POST.get('th_id')
                 turvar_id = request.POST.get('turvar_id')
+                turth_id = request.POST.get('turth_id')
+                vervar_id = request.POST.get('vervar_id')
 
                 print(domain, subject, var_id, th_id, turvar_id)
-                data = api.get_list(model=model, domain=domain, subject=subject, var_id=var_id, turth_id=th_id,
-                                    turvar_id=turvar_id)
+                data = api.get_list(model=model, domain=domain, subject=subject, var_id=var_id, th_id=th_id,
+                                    turvar_id=turvar_id, turth_id=turth_id, vervar_id=vervar_id)
 
                 return JsonResponse(data, safe=False)
 

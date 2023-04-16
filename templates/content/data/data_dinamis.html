@@ -48,20 +48,55 @@
                     </table>
                 </div>
             </div>
-            {#            <div class="col-md-6">#}
-            {#                    <table id="turth" class="table">#}
-            {#                        <thead>#}
-            {#                        <tr>#}
-            {#                            <th>Waktu</th>#}
-            {#                            <th>Aksi</th>#}
-            {#                        </tr>#}
-            {#                        </thead>#}
-            {#                    </table>#}
-            {#                </div>#}
+
+            <div class="row">
+                <div class="col-md-6">
+                    <table id="vervar" class="table">
+                        <thead>
+                        <tr>
+                            <th>Turunan</th>
+                            <th>Aksi</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table id="turth" class="table">
+                        <thead>
+                        <tr>
+                            <th>Turunan Tahun</th>
+                            <th>Aksi</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
 
             <button type="button" id="search-button" class="btn btn-primary">Cari</button>
+            <button type="button" id="reset-button" class="btn btn-primary">Reset data</button>
+        </div>
+        <div id="modal" class="modal fade bd-lg" id="projectModal" tabindex="-1" role="dialog"
+             aria-labelledby="projectModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="projectModalLabel">Data </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
 
-        </div><!-- df-example -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="saveBtn">Save changes</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
 {% endblock %}
@@ -80,6 +115,7 @@
         var domain = "";
         var subject = "";
         var var_id = 0;
+        var vervar_id = 0;
         var th_id = 0;
         var turth_id = 0;
         var turvar_id = 0;
@@ -96,6 +132,7 @@
 
             $("#id_subject").prop("disabled", true); // menonaktifkan select2 kedua saat halaman dimuat
             $('#search-button').hide();
+            $('#reset-button').hide();
 
 
             $("#id_domain").change(function () { // menambahkan event change pada select2 pertama
@@ -113,6 +150,7 @@
                 subject = $('#id_subject').val();
 
                 $('#search-button').show();
+                $('#reset-button').show();
 
                 if ($.fn.DataTable.isDataTable('#example4')) {
                     table_var.clear().destroy();
@@ -167,6 +205,24 @@
                     ],
                 })
             });
+
+            $("#reset-button").on('click', () => {
+                domain = "";
+                subject = "";
+                var_id = "";
+                vervar_id = "";
+                th_id = "";
+                turth_id = "";
+                turvar_id = "";
+                table_var.clear().destroy();
+                table_vervar.clear().destroy();
+                table_turth.clear().destroy();
+                table_th.clear().destroy();
+                table_turvar.clear().destroy();
+                $('#id_subject').val('');
+                $('#id_domain').val('');
+
+            });
             $("#search-button").on('click', () => {
                 var data = {
                     model: "data",
@@ -175,10 +231,26 @@
                     var_id: var_id,
                     th_id: th_id,
                     turvar_id: turvar_id,
+                    turth_id: turth_id,
+                    vervar_id: vervar_id,
                     csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
                 };
                 $.post("/data_get_data/", data, function (response) {
                     console.log(response)
+                    /*
+                    var modalBody = $("#modal .modal-body"); // Mendapatkan elemen body modal
+                    modalBody.empty(); // Menghapus konten sebelumnya (jika ada)
+                    modalBody.append("<p>" + response['labelvervar'] + "</p>");
+
+                    $.each(response["datacontent"], function (key, value) {
+                        // Menambahkan data ke dalam elemen body modal
+                        modalBody.append("<p>" + key + ": " + value + "</p>");
+                    });
+
+
+                    $("#modal").modal("show");
+
+                     */
                 })
             });
         });
@@ -285,6 +357,15 @@
             let id = $(this).data('id');
             turvar_id = id;
         })
+        $(document).on('click', '.btn-turth-id', function () {
+            let id = $(this).data('id');
+            turth_id = id;
+        })
+
+        $(document).on('click', '.btn-vervar-id', function () {
+            let id = $(this).data('id');
+            vervar_id = id;
+        })
 
 
         function getDataTurVarTh(id) {
@@ -293,14 +374,10 @@
             // sendturth();
             sendturvar();
             sendth();
+            sendturth();
+            sendVervar();
         }
 
-        // ===================================================
-        // bisa dipakai nanti
-        $(document).on('click', '.btn-turth-id', function () {
-            let id = $(this).data('id');
-            turth_id = id;
-        })
 
         function sendturth() {
             if (table_turth) {
@@ -350,7 +427,7 @@
             })
         }
 
-        function sendVervar(id_vervar, domain) {
+        function sendVervar() {
             if (table_vervar) {
                 table_vervar.ajax.reload();
                 return;
@@ -367,7 +444,7 @@
                     data: {
                         "domain": domain,
                         "model": "vervar",
-                        "id_var": id_vervar,
+                        "id_var": var_id,
                         "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
                     },
                     dataSrc: function (json) {
@@ -388,7 +465,8 @@
                     {
                         "data": "kode_ver_id",
                         "render": function (data, type, row, meta) {
-                            return '<a href="#">' + data + '</a>';
+                            var idString = data.toString(); // konversi data ke dalam bentuk string
+                            return '<button class="btn btn-outline-primary btn-vervar-id" data-id="' + idString + '"> Pilih </button>';
                         }
                     },
 
