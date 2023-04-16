@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'ajax_datatable',
     # 'custom_tags',
     'notifications',
+    # 'django_vite_plugin',
 ]
 
 MIDDLEWARE = [
@@ -160,4 +161,4 @@ DJANGO_NOTIFICATIONS_CONFIG = {
     'SOFT_DELETE': True,
     # 'PAGINATE_BY': True,
 
-    }
+}

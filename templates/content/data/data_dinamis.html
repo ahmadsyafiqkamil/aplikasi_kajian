@@ -11,15 +11,12 @@
     <div class="container">
         <div data-label="Data Dinamis" class="df-example demo-table">
 
-            <form method="post" id="search-form">
-                {% csrf_token %}
-                {{ domain_form.as_p }}
-                {{ subject_form.as_p }}
-                <button type="submit" id="search-button" class="btn btn-primary">Cari</button>
-            </form>
+
+            {% csrf_token %}
+            {{ domain_form.as_p }}
+            {{ subject_form.as_p }}
+
             <br>
-
-
             <table id="example4" class="table">
                 <thead>
                 <tr>
@@ -41,7 +38,7 @@
                     </table>
                 </div>
                 <div class="col-md-6">
-                    <table id="turth" class="table">
+                    <table id="th" class="table">
                         <thead>
                         <tr>
                             <th>Waktu</th>
@@ -51,7 +48,18 @@
                     </table>
                 </div>
             </div>
+            {#            <div class="col-md-6">#}
+            {#                    <table id="turth" class="table">#}
+            {#                        <thead>#}
+            {#                        <tr>#}
+            {#                            <th>Waktu</th>#}
+            {#                            <th>Aksi</th>#}
+            {#                        </tr>#}
+            {#                        </thead>#}
+            {#                    </table>#}
+            {#                </div>#}
 
+            <button type="button" id="search-button" class="btn btn-primary">Cari</button>
 
         </div><!-- df-example -->
     </div>
@@ -59,7 +67,6 @@
 {% endblock %}
 
 {% block js %}
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"></script>
     <script src="{% static 'lib/prismjs/prism.js' %}"></script>
     <script src="{% static 'lib/datatables.net/js/jquery.dataTables.min.js' %}"></script>
@@ -68,10 +75,18 @@
     <script src="{% static 'lib/datatables.net-responsive-dt/js/responsive.dataTables.min.js' %}"></script>
     <script src="{% static 'lib/select2/js/select2.min.js' %}"></script>
     <script src="{% static 'lib/jqueryui/jquery-ui.min.js' %}"></script>
+    {#    <script src="{% static 'custom/data_dinamis.js' %}"></script>#}
     <script>
+        var domain = "";
+        var subject = "";
+        var var_id = 0;
+        var th_id = 0;
+        var turth_id = 0;
+        var turvar_id = 0;
+        var table_var, table_turth, table_turvar, table_vervar, table_th;
+
         $(function () {
             'use strict'
-            {#$('#search-form').serialize()#}
 
             $('.select2').select2({
                 placeholder: 'Choose one',
@@ -81,9 +96,6 @@
 
             $("#id_subject").prop("disabled", true); // menonaktifkan select2 kedua saat halaman dimuat
             $('#search-button').hide();
-            $('#example4').hide();
-            $('#turvar').hide();
-
 
 
             $("#id_domain").change(function () { // menambahkan event change pada select2 pertama
@@ -97,20 +109,21 @@
 
             $("#id_subject").change(function (event) {
                 event.preventDefault(); // hindari form submit secara normal
-                var domain = $('#id_domain').val();
-                var subject = $('#id_subject').val();
-
-                $('#example4').show();
-                $('#turvar').show();
-                $('#turth').show();
+                domain = $('#id_domain').val();
+                subject = $('#id_subject').val();
 
                 $('#search-button').show();
-                console.log(domain, subject)
-                if ($.fn.DataTable.isDataTable('#example4')) {
-                    $('#example4').DataTable().clear().destroy();
-                }
 
-                var table = $('#example4').DataTable({
+                if ($.fn.DataTable.isDataTable('#example4')) {
+                    table_var.clear().destroy();
+                }
+                /*
+                if (table_var) {
+                    table_var.ajax.reload();
+                    return;
+                }*/
+
+                table_var = $('#example4').DataTable({
                     ordering: false,
                     responsive: true,
                     processing: true,
@@ -147,27 +160,34 @@
                             "data": "var_id",
                             "render": function (data, type, row, meta) {
                                 var idString = data.toString(); // konversi data ke dalam bentuk string
-                                var domainString = "'" + domain.toString() + "'"; // konversi domain ke dalam bentuk string dan tambahkan tanda kutip pada awal dan akhir
-                                return '<a href="#" onclick="sendturvar(' + idString + ',' + domainString + '); sendturth(' + idString + ',' + domainString + ')">' + idString + '</a>';
+                                return '<button id="var_id" class="btn btn-outline-primary"  onclick="getDataTurVarTh(\'' + idString + '\');">' + idString + '</button>';
                             }
                         },
 
                     ],
-
                 })
-
-
             });
-
-
+            $("#search-button").on('click', () => {
+                var data = {
+                    model: "data",
+                    domain: domain,
+                    subject: subject,
+                    var_id: var_id,
+                    th_id: th_id,
+                    turvar_id: turvar_id,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                };
+                $.post("/data_get_data/", data, function (response) {
+                    console.log(response)
+                })
+            });
         });
 
-        function sendturth(id_turvar, domain) {
-            console.log(id_turvar, domain)
-            if ($.fn.DataTable.isDataTable('#turth')) {
-                $('#turth').DataTable().clear().destroy();
+        function sendth() {
+            if ($.fn.DataTable.isDataTable('#th')) {
+                table_th.clear().destroy();
             }
-            var table = $('#turth').DataTable({
+            table_th = $('#th').DataTable({
                 ordering: false,
                 responsive: true,
                 processing: true,
@@ -178,8 +198,8 @@
                     async: true,
                     data: {
                         "domain": domain,
-                        "model": "turth",
-                        "id_var": id_turvar,
+                        "model": "th",
+                        "id_var": var_id,
                         "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
                     },
                     dataSrc: function (json) {
@@ -194,13 +214,14 @@
                 },
                 "columns": [
                     {
-                        "data": "turth"
+                        "data": "th"
                     },
 
                     {
-                        "data": "turth_id",
+                        "data": "th_id",
                         "render": function (data, type, row, meta) {
-                            return '<a href="#">' + data + '</a>';
+                            var idString = data.toString(); // konversi data ke dalam bentuk string
+                            return '<button class="btn btn-outline-primary btn-th-id" data-id="' + idString + '"> Pilih </button>';
                         }
                     },
 
@@ -209,12 +230,11 @@
             })
         }
 
-        function sendturvar(id_turvar, domain) {
-            console.log(id_turvar, domain)
+        function sendturvar() {
             if ($.fn.DataTable.isDataTable('#turvar')) {
-                $('#turvar').DataTable().clear().destroy();
+                table_turvar.clear().destroy();
             }
-            var table = $('#turvar').DataTable({
+            table_turvar = $('#turvar').DataTable({
                 ordering: false,
                 responsive: true,
                 processing: true,
@@ -226,7 +246,7 @@
                     data: {
                         "domain": domain,
                         "model": "turvar",
-                        "id_var": id_turvar,
+                        "id_var": var_id,
                         "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
                     },
                     dataSrc: function (json) {
@@ -247,7 +267,8 @@
                     {
                         "data": "turvar_id",
                         "render": function (data, type, row, meta) {
-                            return '<a href="#">' + data + '</a>';
+                            var idString = data.toString(); // konversi data ke dalam bentuk string
+                            return '<button class="btn btn-outline-primary btn-turvar-id" data-id="' + idString + '"> Pilih </button>';
                         }
                     },
 
@@ -256,13 +277,85 @@
             })
         }
 
+        $(document).on('click', '.btn-th-id', function () {
+            let id = $(this).data('id');
+            th_id = id;
+        })
+        $(document).on('click', '.btn-turvar-id', function () {
+            let id = $(this).data('id');
+            turvar_id = id;
+        })
+
+
+        function getDataTurVarTh(id) {
+            var_id = id;
+            console.log('send', {domain: domain, subject: subject, var_id: var_id});
+            // sendturth();
+            sendturvar();
+            sendth();
+        }
+
+        // ===================================================
+        // bisa dipakai nanti
+        $(document).on('click', '.btn-turth-id', function () {
+            let id = $(this).data('id');
+            turth_id = id;
+        })
+
+        function sendturth() {
+            if (table_turth) {
+                table_turth.ajax.reload();
+                return;
+            }
+            table_turth = $('#turth').DataTable({
+                ordering: false,
+                responsive: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "/data_get_data/",
+                    type: 'POST',
+                    async: true,
+                    data: {
+                        "domain": domain,
+                        "model": "turth",
+                        "id_var": var_id,
+                        "csrfmiddlewaretoken": $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    dataSrc: function (json) {
+                        if (json.data === "no_data") {
+                            // Tampilkan pesan jika data kosong
+                            alert("Data tidak tersedia");
+                            return [];
+                        } else {
+                            return json.data;
+                        }
+                    }
+                },
+                "columns": [
+                    {
+                        "data": "turth"
+                    },
+
+                    {
+                        "data": "turth_id",
+                        "render": function (data, type, row, meta) {
+                            var idString = data.toString(); // konversi data ke dalam bentuk string
+                            return '<button class="btn btn-outline-primary btn-turth-id" data-id="' + idString + '"> Pilih </button>';
+                        }
+                    },
+
+                ],
+
+            })
+        }
 
         function sendVervar(id_vervar, domain) {
-            console.log(id_vervar, domain)
-            if ($.fn.DataTable.isDataTable('#vervar')) {
-                $('#vervar').DataTable().clear().destroy();
+            if (table_vervar) {
+                table_vervar.ajax.reload();
+                return;
             }
-            var table = $('#vervar').DataTable({
+            table_vervar = $('#vervar').DataTable({
                 ordering: false,
                 responsive: true,
                 processing: true,
@@ -305,6 +398,8 @@
 
 
         }
+
+
     </script>
 {% endblock %}
 

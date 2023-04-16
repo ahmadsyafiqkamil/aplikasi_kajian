@@ -73,6 +73,15 @@ class API():
                 dt = self.data_transform(data)
                 return dt
 
+            case 'th':
+                "https://webapi.bps.go.id/v1/api/list/model/th/domain/0000/var/457/key/2ff0d1794d793a4be0a72124a029172f/"
+                id_var = kwargs.get("id_var")
+                url = f"{self.url}list/model/{model}/domain/{domain}/var/{id_var}/page/{page}/key/{self.key}"
+                print(url)
+                data = requests.get(url).json()
+                dt = self.data_transform(data)
+                return dt
+
             case "vervar":
                 "https://webapi.bps.go.id/v1/api/list/model/vervar/domain/0000/var/56/page/1/key/2ff0d1794d793a4be0a72124a029172f/"
                 id_var = kwargs.get("id_var")
@@ -81,6 +90,20 @@ class API():
                 data = requests.get(url).json()
                 dt = self.data_transform(data)
                 return dt
+
+            case "data":
+                "https://webapi.bps.go.id/v1/api/list/model/data/domain/0000/var/56/turvar/1/th/1/turth/1/key/2ff0d1794d793a4be0a72124a029172f/"
+                domain = kwargs.get('domain')
+                subject = kwargs.get('subject')
+                var_id = kwargs.get('var_id')
+                turth_id = kwargs.get('turth_id')
+                turvar_id = kwargs.get('turvar_id')
+                url = f"{self.url}list/model/{model}/domain/{domain}/var/{var_id}/turvar/{turvar_id}/th/{turth_id}/key/{self.key}"
+                print(url)
+                data = requests.get(url).json()
+                # dt = self.data_transform(data)
+                return data
+
             case "news":
                 pass
 

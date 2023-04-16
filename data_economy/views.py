@@ -137,6 +137,16 @@ def get_data(request):
                 print(data)
                 return JsonResponse(data, safe=False)
 
+            case 'th':
+                page = request.POST.get('page')
+                id_var = request.POST.get('id_var')
+                # draw = int(request.POST.get('draw'))
+                # start = int(request.POST.get('start'))
+                # length = int(request.POST.get('length'))
+                data = api.get_list(model=model, domain=domain, id_var=id_var, page=page)
+                print(data)
+                return JsonResponse(data, safe=False)
+
             case 'turvar':
                 page = request.POST.get('page')
                 id_var = request.POST.get('id_var')
@@ -156,5 +166,19 @@ def get_data(request):
                 data = api.get_list(model=model, domain=domain, page=page, id_var=id_var)
                 print(data)
                 return JsonResponse(data, safe=False)
+
+            case 'data':
+                domain = request.POST.get('domain')
+                subject = request.POST.get('subject')
+                var_id = request.POST.get('var_id')
+                th_id = request.POST.get('th_id')
+                turvar_id = request.POST.get('turvar_id')
+
+                print(domain, subject, var_id, th_id, turvar_id)
+                data = api.get_list(model=model, domain=domain, subject=subject, var_id=var_id, turth_id=th_id,
+                                    turvar_id=turvar_id)
+
+                return JsonResponse(data, safe=False)
+
     else:
         return HttpResponse("Invalid request method")
