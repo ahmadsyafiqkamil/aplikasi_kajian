@@ -119,13 +119,12 @@ def get_data(request):
         subject = request.POST.get('subject')
         model = request.POST.get('model')
 
-        draw = int(request.POST.get('draw'))
-        start = int(request.POST.get('start'))
-        length = int(request.POST.get('length'))
-        page = start // length + 1
-
         match model:
             case "var":
+                draw = int(request.POST.get('draw'))
+                start = int(request.POST.get('start'))
+                length = int(request.POST.get('length'))
+                page = start // length + 1
 
                 data = api.get_list(model=model, domain=domain, subject=subject, page=page)
                 data.update({"draw": draw})
@@ -133,6 +132,10 @@ def get_data(request):
 
             case 'turth':
                 id_var = request.POST.get('id_var')
+                draw = int(request.POST.get('draw'))
+                start = int(request.POST.get('start'))
+                length = int(request.POST.get('length'))
+                page = start // length + 1
 
                 data = api.get_list(model=model, domain=domain, id_var=id_var, page=page)
                 data.update({"draw": draw})
@@ -140,18 +143,30 @@ def get_data(request):
 
             case 'th':
                 id_var = request.POST.get('id_var')
+                draw = int(request.POST.get('draw'))
+                start = int(request.POST.get('start'))
+                length = int(request.POST.get('length'))
+                page = start // length + 1
                 data = api.get_list(model=model, domain=domain, id_var=id_var, page=page)
                 data.update({"draw": draw})
                 return JsonResponse(data, safe=False)
 
             case 'turvar':
                 id_var = request.POST.get('id_var')
+                draw = int(request.POST.get('draw'))
+                start = int(request.POST.get('start'))
+                length = int(request.POST.get('length'))
+                page = start // length + 1
                 data = api.get_list(model=model, domain=domain, id_var=id_var, page=page)
                 data.update({"draw": draw})
                 return JsonResponse(data, safe=False)
 
             case "vervar":
                 id_var = request.POST.get('id_var')
+                draw = int(request.POST.get('draw'))
+                start = int(request.POST.get('start'))
+                length = int(request.POST.get('length'))
+                page = start // length + 1
                 data = api.get_list(model=model, domain=domain, page=page, id_var=id_var)
                 data.update({"draw": draw})
                 return JsonResponse(data, safe=False)
@@ -165,7 +180,8 @@ def get_data(request):
                 turth_id = request.POST.get('turth_id')
                 vervar_id = request.POST.get('vervar_id')
 
-                print(domain, subject, var_id, th_id, turvar_id)
+                print(
+                    f"domain: {domain}, subject: {subject}, var_id: {var_id}, th_id: {th_id}, turvar_id: {turvar_id}, turth_id: {turth_id}, vervar_id: {vervar_id}")
                 data = api.get_list(model=model, domain=domain, subject=subject, var_id=var_id, th_id=th_id,
                                     turvar_id=turvar_id, turth_id=turth_id, vervar_id=vervar_id)
 

@@ -100,7 +100,18 @@ class API():
                 turvar_id = kwargs.get('turvar_id')
                 th_id = kwargs.get('th_id')
                 vervar_id = kwargs.get('vervar_id')
-                url = f"{self.url}list/model/{model}/domain/{domain}/var/{var_id}/turvar/{turvar_id}/vervar/{vervar_id}/th/{th_id}/turth/{turth_id}/key/{self.key}"
+
+                path = ""
+                if turvar_id is not "0":
+                    path += f"turvar/{turvar_id}/"
+                if turth_id is not "0":
+                    path += f"turth/{turth_id}/"
+                if vervar_id is not "0":
+                    path += f"vervar/{vervar_id}/"
+                if th_id is not "0":
+                    path += f"th/{th_id}/"
+
+                url = f"{self.url}list/model/{model}/domain/{domain}/var/{var_id}/{path}key/{self.key}"
                 print(url)
                 data = requests.get(url).json()
                 # dt = self.data_transform(data)

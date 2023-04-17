@@ -207,23 +207,37 @@
             });
 
             $("#reset-button").on('click', () => {
+                $("#id_subject").prop("disabled", true); // menonaktifkan select2 kedua jika select2 pertama tidak dipilih
+                $('#id_subject').val('');
                 domain = "";
                 subject = "";
-                var_id = "";
-                vervar_id = "";
-                th_id = "";
-                turth_id = "";
-                turvar_id = "";
+                var_id = 0;
+                vervar_id = 0;
+                th_id = 0;
+                turth_id = 0;
+                turvar_id = 0;
                 table_var.clear().destroy();
                 table_vervar.clear().destroy();
                 table_turth.clear().destroy();
                 table_th.clear().destroy();
                 table_turvar.clear().destroy();
-                $('#id_subject').val('');
-                $('#id_domain').val('');
+
 
             });
             $("#search-button").on('click', () => {
+                console.log(
+                    "search",
+                    {
+                        domain: domain,
+                        subject: subject,
+                        var_id: var_id,
+                        th_id: th_id,
+                        turvar_id: turvar_id,
+                        turth_id: turth_id,
+                        vervar_id: vervar_id,
+                    }
+                )
+
                 var data = {
                     model: "data",
                     domain: domain,
@@ -277,7 +291,7 @@
                     dataSrc: function (json) {
                         if (json.data === "no_data") {
                             // Tampilkan pesan jika data kosong
-                            alert("Data tidak tersedia");
+                            alert("Data tahun tidak tersedia");
                             return [];
                         } else {
                             return json.data;
@@ -324,7 +338,7 @@
                     dataSrc: function (json) {
                         if (json.data === "no_data") {
                             // Tampilkan pesan jika data kosong
-                            alert("Data tidak tersedia");
+                            alert("Data turunan variabel tidak tersedia");
                             return [];
                         } else {
                             return json.data;
@@ -402,7 +416,7 @@
                     dataSrc: function (json) {
                         if (json.data === "no_data") {
                             // Tampilkan pesan jika data kosong
-                            alert("Data tidak tersedia");
+                            alert("Data turunan tahun tidak tersedia");
                             return [];
                         } else {
                             return json.data;
@@ -450,7 +464,7 @@
                     dataSrc: function (json) {
                         if (json.data === "no_data") {
                             // Tampilkan pesan jika data kosong
-                            alert("Data tidak tersedia");
+                            alert("Data vertikal variabel tidak tersedia");
                             return [];
                         } else {
                             return json.data;
