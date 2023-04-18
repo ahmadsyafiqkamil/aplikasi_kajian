@@ -71,10 +71,20 @@
                     </table>
                 </div>
             </div>
+            <br>
 
-            <button type="button" id="search-button" class="btn btn-primary">Cari</button>
+            <button type="button" id="search-button" class="btn btn-primary">Tambahkan</button>
             <button type="button" id="reset-button" class="btn btn-primary">Reset data</button>
         </div>
+        <br>
+        <div data-label="Data Dinamis" class="df-example demo-table">
+            <button type="button" id="download-button" class="btn btn-primary">Unduh Data</button>
+            <button type="button" id="save-button" class="btn btn-primary">Simpan</button>
+            <br>
+            <div id="json-container"></div>
+        </div>
+
+
         <div id="modal" class="modal fade bd-lg" id="projectModal" tabindex="-1" role="dialog"
              aria-labelledby="projectModalLabel"
              aria-hidden="true">
@@ -103,6 +113,7 @@
 
 {% block js %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="{% static 'lib/prismjs/prism.js' %}"></script>
     <script src="{% static 'lib/datatables.net/js/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'lib/datatables.net-dt/js/dataTables.dataTables.min.js' %}"></script>
@@ -120,9 +131,10 @@
         var turth_id = 0;
         var turvar_id = 0;
         var table_var, table_turth, table_turvar, table_vervar, table_th;
-
         $(function () {
+
             'use strict'
+            const data_dinamis = [];
 
             $('.select2').select2({
                 placeholder: 'Choose one',
@@ -132,7 +144,9 @@
 
             $("#id_subject").prop("disabled", true); // menonaktifkan select2 kedua saat halaman dimuat
             $('#search-button').hide();
+            $('#download-button').hide();
             $('#reset-button').hide();
+            $('#save-button').hide();
 
 
             $("#id_domain").change(function () { // menambahkan event change pada select2 pertama
@@ -225,6 +239,7 @@
 
             });
             $("#search-button").on('click', () => {
+
                 console.log(
                     "search",
                     {
@@ -251,23 +266,88 @@
                 };
                 $.post("/data_get_data/", data, function (response) {
                     console.log(response)
-                    /*
-                    var modalBody = $("#modal .modal-body"); // Mendapatkan elemen body modal
-                    modalBody.empty(); // Menghapus konten sebelumnya (jika ada)
-                    modalBody.append("<p>" + response['labelvervar'] + "</p>");
+                    {#data_dinamis.push({"response": response})#}
+                    {#const jsonContainer = document.getElementById("json-container");#}
+                    const html = $.parseHTML(response.html);
 
-                    $.each(response["datacontent"], function (key, value) {
-                        // Menambahkan data ke dalam elemen body modal
-                        modalBody.append("<p>" + key + ": " + value + "</p>");
-                    });
+                    const label = $("<h3>").text("Data Tabel:" + response.label);
+                    $('#json-container').append(label);
+
+                    $('#json-container').append(html);
 
 
-                    $("#modal").modal("show");
+                }, "json");
+                $('#download-button').show();
+                $('#save-button').show();
+            });
 
-                     */
-                })
+            $("#download-button").on('click', () => {
+                var data = {
+                    model: "data",
+                    domain: domain,
+                    subject: subject,
+                    var_id: var_id,
+                    th_id: th_id,
+                    turvar_id: turvar_id,
+                    turth_id: turth_id,
+                    vervar_id: vervar_id,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                };
+                $.post("/data_download/", data, function (response) {
+                    console.log(response)
+                    var blob = new Blob([response], {type: "text/csv;charset=utf-8;"});
+                    saveAs(blob, "Dataframe Pandas.csv");
+                });
+            });
+
+            $("#save-button").on('click', () => {
+                var data = {
+                    model: "data",
+                    domain: domain,
+                    subject: subject,
+                    var_id: var_id,
+                    th_id: th_id,
+                    turvar_id: turvar_id,
+                    turth_id: turth_id,
+                    vervar_id: vervar_id,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                };
+                $.post("/data_save/", data, function (response) {
+                    console.log(response)
+                    window.location.href = "/data_dynamic_data/";
+
+                });
             });
         });
+
+
+        $(document).on('click', '.btn-th-id', function () {
+            let id = $(this).data('id');
+            th_id = id;
+        })
+        $(document).on('click', '.btn-turvar-id', function () {
+            let id = $(this).data('id');
+            turvar_id = id;
+        })
+        $(document).on('click', '.btn-turth-id', function () {
+            let id = $(this).data('id');
+            turth_id = id;
+        })
+
+        $(document).on('click', '.btn-vervar-id', function () {
+            let id = $(this).data('id');
+            vervar_id = id;
+        })
+
+
+        function getDataTurVarTh(id) {
+            var_id = id;
+            console.log('send', {domain: domain, subject: subject, var_id: var_id});
+            sendturvar();
+            sendth();
+            sendturth();
+            sendVervar();
+        }
 
         function sendth() {
             if ($.fn.DataTable.isDataTable('#th')) {
@@ -347,7 +427,10 @@
                 },
                 "columns": [
                     {
-                        "data": "turvar"
+                        "data": "turvar",
+                        render: function (data, type, row) {
+                            return '<span style="white-space:normal">' + data + "</span>";
+                        }
                     },
 
                     {
@@ -362,36 +445,6 @@
 
             })
         }
-
-        $(document).on('click', '.btn-th-id', function () {
-            let id = $(this).data('id');
-            th_id = id;
-        })
-        $(document).on('click', '.btn-turvar-id', function () {
-            let id = $(this).data('id');
-            turvar_id = id;
-        })
-        $(document).on('click', '.btn-turth-id', function () {
-            let id = $(this).data('id');
-            turth_id = id;
-        })
-
-        $(document).on('click', '.btn-vervar-id', function () {
-            let id = $(this).data('id');
-            vervar_id = id;
-        })
-
-
-        function getDataTurVarTh(id) {
-            var_id = id;
-            console.log('send', {domain: domain, subject: subject, var_id: var_id});
-            // sendturth();
-            sendturvar();
-            sendth();
-            sendturth();
-            sendVervar();
-        }
-
 
         function sendturth() {
             if (table_turth) {
@@ -425,7 +478,10 @@
                 },
                 "columns": [
                     {
-                        "data": "turth"
+                        "data": "turth",
+                        render: function (data, type, row) {
+                            return '<span style="white-space:normal">' + data + "</span>";
+                        }
                     },
 
                     {
@@ -473,7 +529,10 @@
                 },
                 "columns": [
                     {
-                        "data": "vervar"
+                        "data": "vervar",
+                        render: function (data, type, row) {
+                            return '<span style="white-space:normal">' + data + "</span>";
+                        }
                     },
 
                     {

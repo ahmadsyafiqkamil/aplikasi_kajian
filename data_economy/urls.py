@@ -15,6 +15,8 @@ urlpatterns = [
     path('_get_view_press/', get_view_press, name='get_view_press'),
     path('_get_subject/', get_subject, name='get_subject'),
     path('_get_data/', get_data, name='get_data'),
+    path('_download/', download_file, name='download'),
+    path('_save/', simpan_data, name='simpan'),
 
     # path('_list_data/<str:sbj>', ListData.as_view(), name='ListData'),
 ]

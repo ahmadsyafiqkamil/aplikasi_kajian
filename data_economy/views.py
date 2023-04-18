@@ -1,11 +1,20 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponse
 from django.views import generic
-from django.views import View
-from .models import *
 from .forms import *
-from .api import *
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+import pandas as pd
+import io
+import xlsxwriter
+import csv
+import codecs
+import urllib.parse
+from django.utils.text import slugify
+from django.template.loader import render_to_string
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from .api import API
+from .models import *
+from django.contrib.auth.models import User
 
 
 # Create your views here.
@@ -184,8 +193,65 @@ def get_data(request):
                     f"domain: {domain}, subject: {subject}, var_id: {var_id}, th_id: {th_id}, turvar_id: {turvar_id}, turth_id: {turth_id}, vervar_id: {vervar_id}")
                 data = api.get_list(model=model, domain=domain, subject=subject, var_id=var_id, th_id=th_id,
                                     turvar_id=turvar_id, turth_id=turth_id, vervar_id=vervar_id)
-
-                return JsonResponse(data, safe=False)
+                label = data["var"][0]["label"]
+                dt = api.data_dinamis_transform_to_pd(data)
+                return JsonResponse({'html': dt.to_html(), 'label': label}, safe=False)
 
     else:
         return HttpResponse("Invalid request method")
+
+
+def download_file(request):
+    if request.method == "POST":
+        api = API()
+        model = request.POST.get('model')
+        domain = request.POST.get('domain')
+        subject = request.POST.get('subject')
+        var_id = request.POST.get('var_id')
+        th_id = request.POST.get('th_id')
+        turvar_id = request.POST.get('turvar_id')
+        turth_id = request.POST.get('turth_id')
+        vervar_id = request.POST.get('vervar_id')
+
+        data = api.get_list(model=model, domain=domain, subject=subject, var_id=var_id, th_id=th_id,
+                            turvar_id=turvar_id, turth_id=turth_id, vervar_id=vervar_id)
+
+        dt = api.data_dinamis_transform_to_pd(data)
+
+        # Set the filename and Content-Disposition header
+        filename = f'{slugify("Dataframe Pandas")}.csv'
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        # Write dataframe to response
+        dt.to_csv(path_or_buf=response, index=True, encoding='utf-8')
+
+        return response
+
+
+def simpan_data(request):
+    if request.method == "POST":
+        api = API()
+        model = request.POST.get('model')
+        domain = request.POST.get('domain')
+        subject = request.POST.get('subject')
+        var_id = request.POST.get('var_id')
+        th_id = request.POST.get('th_id')
+        turvar_id = request.POST.get('turvar_id')
+        turth_id = request.POST.get('turth_id')
+        vervar_id = request.POST.get('vervar_id')
+
+        data = api.get_list(model=model, domain=domain, subject=subject, var_id=var_id, th_id=th_id,
+                            turvar_id=turvar_id, turth_id=turth_id, vervar_id=vervar_id)
+
+        dt = api.data_dinamis_transform_to_pd(data)
+        label = data["var"][0]["label"]
+        json_data = dt.to_json(orient='records')
+
+        aktifitas = AktifitasData(
+            user=request.user,
+            data=json_data,
+            label_data=label
+        )
+        aktifitas.save()
+        return JsonResponse({'hasil': "data tersimpan", 'label': label}, safe=False)

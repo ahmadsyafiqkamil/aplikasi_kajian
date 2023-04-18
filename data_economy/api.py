@@ -1,4 +1,5 @@
 import requests
+import pandas as pd
 
 
 class API():
@@ -114,7 +115,7 @@ class API():
                 url = f"{self.url}list/model/{model}/domain/{domain}/var/{var_id}/{path}key/{self.key}"
                 print(url)
                 data = requests.get(url).json()
-                # dt = self.data_transform(data)
+                # dt = self.data_dinamis_transform(data)
                 return data
 
             case "news":
@@ -144,3 +145,26 @@ class API():
                 "data": "no_data"
             }
             return dt
+
+    def data_dinamis_transform_to_pd(self, response):
+        result = {}
+
+        vervar_labels = {v["val"]: v["label"] for v in response["vervar"]}
+        tahun_labels = {t["val"]: t["label"] for t in response["tahun"]}
+
+        for t in response["tahun"]:
+            tahun = tahun_labels[t["val"]]
+            if tahun not in result:
+                result[tahun] = {}
+            for v in response["vervar"]:
+                vervar = vervar_labels[v["val"]]
+                if vervar not in result[tahun]:
+                    result[tahun][vervar] = {}
+                for k, d in response["datacontent"].items():
+                    if v["val"] < 1000:
+                        result[tahun][vervar] = d
+                    elif str(t["val"]) in k[-5:-1] and k.startswith(str(v["val"])):
+                        result[tahun][vervar] = d
+
+        df = pd.DataFrame.from_dict(result)
+        return df

@@ -64,9 +64,10 @@ class BaseModel(models.Model):
         return super(BaseModel, self).save(*args, **kwargs)
 
 
-class AktifitasData(BaseModel):
+class AktifitasData(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     data = models.JSONField(verbose_name="Data")
+    label_data = models.TextField(null=True, blank=True, verbose_name="Label Data")
 
 
 class Domain(models.Model):
