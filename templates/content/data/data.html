@@ -1,23 +1,98 @@
 {% extends 'base/base.html' %}
 {% load static %}
 {% block css %}
-
+    <link href="{% static 'lib/select2/css/select2.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/ion-rangeslider/css/ion.rangeSlider.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/datatables.net-dt/css/jquery.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/datatables.net-responsive-dt/css/responsive.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/select2/css/select2.min.css' %}" rel="stylesheet">
 {% endblock %}
 {% block content %}
 
     <div class="container">
         <h1>Halaman Data</h1>
+        {% csrf_token %}
+        <div data-label="Example" class="df-example demo-table">
+            <table id="example4" class="table">
+                <thead>
+                <tr>
+                    <th class="wd-20p">Label Data</th>
+                    <th class="wd-20p">Data</th>
+                    <th class="wd-25p">Aksi</th>
 
+                </tr>
+                </thead>
+            </table>
+        </div><!-- df-example -->
 
-
+        <br>
+        <div data-label="Data Dinamis" class="df-example demo-table">
+            <div id="json-container"></div>
         </div>
 
 
     </div>
 {% endblock %}
 
+
+
+
 {% block js %}
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"></script>
+    <script src="{% static 'lib/prismjs/prism.js' %}"></script>
+    <script src="{% static 'lib/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-dt/js/dataTables.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'lib/datatables.net-responsive-dt/js/responsive.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/select2/js/select2.min.js' %}"></script>
+    <script src="{% static 'lib/jqueryui/jquery-ui.min.js' %}"></script>
+
+
+    <script type="text/javascript">
+        $(function () {
+            'use strict'
+            $('#example4').DataTable({
+                'ajax': '{% url "data:get_data_home" %}',
+                "dataSrc": "",
+                "columns": [
+                    {"data": "label_var"},
+                    {
+                        "data": "id",
+                        "render": function (data, type, full, meta) {
+                            var idString = data.toString();
+                            return '<button class="btn btn-outline-primary btn-data-id" data-id="' + idString + '">Lihat Data</input>';
+                        }
+                    },
+                    {"data": "id"}
+                ],
+                language: {
+                    searchPlaceholder: 'Search...',
+                    sSearch: '',
+                    lengthMenu: '_MENU_ items/page',
+                }
+            });
+
+        });
+        $(document).on('click', '.btn-data-id', function () {
+            var id = $(this).data('id');
+            var data =
+                {
+                    id: id,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+
+                }
+            $.post("/data_get_data_pd/", data, function (response) {
+                console.log(response)
+                $('#json-container').empty();
+                const html = $.parseHTML(response.html);
+                const label = $("<h3>").text("Data Tabel:" + response.label);
+                $('#json-container').append(label);
+                $('#json-container').append(html);
+            }, "json");
+
+        })
+    </script>
 {% endblock %}
 
 

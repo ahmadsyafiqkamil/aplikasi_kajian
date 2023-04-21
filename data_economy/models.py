@@ -66,8 +66,16 @@ class BaseModel(models.Model):
 
 class AktifitasData(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    data = models.JSONField(verbose_name="Data")
-    label_data = models.TextField(null=True, blank=True, verbose_name="Label Data")
+    data = models.JSONField(verbose_name="Data", null=True, blank=True, )
+    label_var = models.TextField(null=True, blank=True, verbose_name="Label Data")
+    data_data = models.JSONField(verbose_name="Data data", null=True, blank=True, )
+
+    def __str__(self):
+        return str(self.label_var)
+
+    class Meta:
+        db_table = "tbl_aktifitas"
+        order_with_respect_to = "user"
 
 
 class Domain(models.Model):

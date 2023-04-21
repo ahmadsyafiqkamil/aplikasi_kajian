@@ -151,20 +151,74 @@ class API():
 
         vervar_labels = {v["val"]: v["label"] for v in response["vervar"]}
         tahun_labels = {t["val"]: t["label"] for t in response["tahun"]}
+        bulan_labels = {b["val"]: b["label"] for b in response["turtahun"]}
+        karakteristik_labels = {k["val"]: k["label"] for k in response["turvar"]}
+        var_val = response["var"][0]["val"]
 
+        # Mengisi data ke dalam result dictionary
         for t in response["tahun"]:
             tahun = tahun_labels[t["val"]]
             if tahun not in result:
                 result[tahun] = {}
-            for v in response["vervar"]:
-                vervar = vervar_labels[v["val"]]
-                if vervar not in result[tahun]:
-                    result[tahun][vervar] = {}
-                for k, d in response["datacontent"].items():
-                    if v["val"] < 1000:
-                        result[tahun][vervar] = d
-                    elif str(t["val"]) in k[-5:-1] and k.startswith(str(v["val"])):
-                        result[tahun][vervar] = d
 
-        df = pd.DataFrame.from_dict(result)
+            for tt in response["turtahun"]:
+                bulan = bulan_labels[tt["val"]]
+                if bulan not in result[tahun]:
+                    result[tahun][bulan] = {}
+
+                for v in response["vervar"]:
+                    vervar = vervar_labels[v["val"]]
+                    if vervar not in result[tahun][bulan]:
+                        result[tahun][bulan][vervar] = {}
+
+                        for tv in response["turvar"]:
+                            turvar = karakteristik_labels[tv["val"]]
+                            if turvar not in result[tahun][bulan][vervar]:
+                                result[tahun][bulan][vervar][turvar] = {}
+
+                                for k, d in response["datacontent"].items():
+                                    if k not in result[tahun][bulan][vervar][turvar]:
+                                        result[tahun][bulan][vervar][turvar][k] = {}
+                                    result[tahun][bulan][vervar][turvar][k] = d
+
+        # Mengubah dictionary menjadi pandas dataframe
+        dfs = []
+        for tahun, bulan_dict in result.items():
+            for bulan, vervar_dict in bulan_dict.items():
+                for vervar, karakteristik_dict in vervar_dict.items():
+                    for karakteristik, data_dict in karakteristik_dict.items():
+                        df = pd.DataFrame(data_dict.items(), columns=["data_key", "data"])
+                        df["tahun"] = tahun
+                        df["bulan"] = bulan
+                        df["vervar"] = vervar
+                        df["karakteristik"] = karakteristik
+                        df.set_index(["tahun", "bulan", "vervar", "karakteristik", "data_key"], inplace=True)
+                        dfs.append(df)
+
+        # Menggabungkan semua dataframe menjadi satu dataframe dengan pd.concat()
+        df = pd.concat(dfs)
         return df
+
+    # def data_dinamis_transform_to_pd(self, response):
+    #     result = {}
+    #
+    #     vervar_labels = {v["val"]: v["label"] for v in response["vervar"]}
+    #     tahun_labels = {t["val"]: t["label"] for t in response["tahun"]}
+    #     bulan_labels = {b["val"]: b["label"] for b in response["turtahun"]}
+    #
+    #     for t in response["tahun"]:
+    #         tahun = tahun_labels[t["val"]]
+    #         if tahun not in result:
+    #             result[tahun] = {}
+    #         for v in response["vervar"]:
+    #             vervar = vervar_labels[v["val"]]
+    #             if vervar not in result[tahun]:
+    #                 result[tahun][vervar] = {}
+    #             for k, d in response["datacontent"].items():
+    #                 if v["val"] < 1000:
+    #                     result[tahun][vervar] = d
+    #                 elif str(t["val"]) in k[-5:-1] and k.startswith(str(v["val"])):
+    #                     result[tahun][vervar] = d
+    #
+    #     df = pd.DataFrame.from_dict(result)
+    #     return df

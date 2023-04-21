@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'ajax_datatable',
     # 'custom_tags',
     'notifications',
-    # 'django_vite_plugin',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

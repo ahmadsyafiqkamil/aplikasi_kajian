@@ -3,24 +3,42 @@ from django.http import JsonResponse, HttpResponse
 from django.views import generic
 from .forms import *
 import pandas as pd
-import io
-import xlsxwriter
-import csv
-import codecs
-import urllib.parse
 from django.utils.text import slugify
-from django.template.loader import render_to_string
-from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .api import API
 from .models import *
 from django.contrib.auth.models import User
+from .serializers import *
+from rest_framework import serializers
+import json
 
 
 # Create your views here.
 
 class HomeView(LoginRequiredMixin, generic.TemplateView):
     template_name = 'content/data/data.html'
+
+
+def get_data_home(request):
+    aktifitas = AktifitasData.objects.all()
+    serializer = AktifitasDataSerializer(aktifitas, many=True)
+    data = {
+        'data': serializer.data
+    }
+    return JsonResponse({'data': serializer.data})
+
+
+def get_data_pd(request):
+    if request.method == 'POST':
+        id = request.POST.get('id')
+        data = AktifitasData.objects.get(pk=id)
+        data_dict = json.loads(data.data)
+        df = pd.DataFrame.from_dict(data_dict)
+        return JsonResponse({'html': df.to_html(), 'label': data.label_var}, safe=False)
+
+
+class BeritaView(LoginRequiredMixin, generic.TemplateView):
+    template_name = 'content/data/berita.html'
 
 
 class InfografisView(LoginRequiredMixin, generic.TemplateView):
@@ -30,10 +48,6 @@ class InfografisView(LoginRequiredMixin, generic.TemplateView):
         context = super().get_context_data(**kwargs)
         context['form'] = DomainSearchForm()
         return context
-
-
-class BeritaView(LoginRequiredMixin, generic.TemplateView):
-    template_name = 'content/data/berita.html'
 
 
 def get_infografis(request):
@@ -194,8 +208,8 @@ def get_data(request):
                 data = api.get_list(model=model, domain=domain, subject=subject, var_id=var_id, th_id=th_id,
                                     turvar_id=turvar_id, turth_id=turth_id, vervar_id=vervar_id)
                 label = data["var"][0]["label"]
-                dt = api.data_dinamis_transform_to_pd(data)
-                return JsonResponse({'html': dt.to_html(), 'label': label}, safe=False)
+                df = api.data_dinamis_transform_to_pd(data)
+                return JsonResponse({'html': df.to_html(), 'label': label}, safe=False)
 
     else:
         return HttpResponse("Invalid request method")
@@ -246,12 +260,24 @@ def simpan_data(request):
 
         dt = api.data_dinamis_transform_to_pd(data)
         label = data["var"][0]["label"]
-        json_data = dt.to_json(orient='records')
+        json_data = dt.to_json()
+
+        data_data = {
+            "var": data["var"],
+            "turvar": data["turvar"],
+            "labelvervar": data["labelvervar"],
+            "vervar": data["vervar"],
+            "tahun": data["tahun"],
+            "turtahun": data["turtahun"],
+            "metadata": data["metadata"],
+            "datacontent": data["datacontent"]
+        }
 
         aktifitas = AktifitasData(
             user=request.user,
             data=json_data,
-            label_data=label
+            label_var=label,
+            data_data=data_data
         )
         aktifitas.save()
         return JsonResponse({'hasil': "data tersimpan", 'label': label}, safe=False)
