@@ -33,7 +33,21 @@ def get_data_pd(request):
         id = request.POST.get('id')
         data = AktifitasData.objects.get(pk=id)
         data_dict = json.loads(data.data)
-        df = pd.DataFrame.from_dict(data_dict)
+        data_tuples = []
+
+        # Iterate through each key in data_dict and convert to tuple
+        for key, value in data_dict['data'].items():
+            # Remove brackets and quotes from key string, and split on comma
+            key_parts = key.replace('\'', '').replace('(', '').replace(')', '').split(',')
+            # Convert each part of key to a tuple
+            index = tuple([x.strip() for x in key_parts])
+            data_tuples.append(index + (value,))
+
+        # Create pandas DataFrame with multi-index
+        # "tahun", "bulan", "vervar", "karakteristik", "data_key"
+        df = pd.DataFrame(data_tuples, columns=['tahun', 'bulan', 'vervar', 'karakteristik', 'data_key', 'Data'])
+        df = df.set_index(['tahun', 'bulan', 'vervar', 'karakteristik', 'data_key'])
+
         return JsonResponse({'html': df.to_html(), 'label': data.label_var}, safe=False)
 
 
@@ -209,6 +223,7 @@ def get_data(request):
                                     turvar_id=turvar_id, turth_id=turth_id, vervar_id=vervar_id)
                 label = data["var"][0]["label"]
                 df = api.data_dinamis_transform_to_pd(data)
+
                 return JsonResponse({'html': df.to_html(), 'label': label}, safe=False)
 
     else:

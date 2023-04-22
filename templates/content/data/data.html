@@ -54,9 +54,15 @@
             'use strict'
             $('#example4').DataTable({
                 'ajax': '{% url "data:get_data_home" %}',
+                'responsive': true,
                 "dataSrc": "",
                 "columns": [
-                    {"data": "label_var"},
+                    {
+                        "data": "label_var",
+                        render: function (data, type, row) {
+                            return '<span style="white-space:normal">' + data + "</span>";
+                        }
+                    },
                     {
                         "data": "id",
                         "render": function (data, type, full, meta) {

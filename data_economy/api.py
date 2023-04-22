@@ -199,26 +199,4 @@ class API():
         df = pd.concat(dfs)
         return df
 
-    # def data_dinamis_transform_to_pd(self, response):
-    #     result = {}
-    #
-    #     vervar_labels = {v["val"]: v["label"] for v in response["vervar"]}
-    #     tahun_labels = {t["val"]: t["label"] for t in response["tahun"]}
-    #     bulan_labels = {b["val"]: b["label"] for b in response["turtahun"]}
-    #
-    #     for t in response["tahun"]:
-    #         tahun = tahun_labels[t["val"]]
-    #         if tahun not in result:
-    #             result[tahun] = {}
-    #         for v in response["vervar"]:
-    #             vervar = vervar_labels[v["val"]]
-    #             if vervar not in result[tahun]:
-    #                 result[tahun][vervar] = {}
-    #             for k, d in response["datacontent"].items():
-    #                 if v["val"] < 1000:
-    #                     result[tahun][vervar] = d
-    #                 elif str(t["val"]) in k[-5:-1] and k.startswith(str(v["val"])):
-    #                     result[tahun][vervar] = d
-    #
-    #     df = pd.DataFrame.from_dict(result)
-    #     return df
+
