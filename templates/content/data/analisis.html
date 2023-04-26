@@ -20,6 +20,7 @@
                     <th class="wd-20p">Data</th>
                     <th class="wd-20p">Variabel</th>
                     <th class="wd-25p">Aksi</th>
+
                 </tr>
                 </thead>
             </table>
@@ -33,6 +34,9 @@
 
     </div>
 {% endblock %}
+
+
+
 
 {% block js %}
 
@@ -96,14 +100,8 @@
                 $('#json-container').empty();
                 const html = $.parseHTML(response.html);
                 const label = $("<h3>").text("Data Tabel:" + response.label);
-                const img = $("<img>").attr({
-                    "src": response.img + "?t=" + Date.now(),
-                    "width": "500px", // Tambahkan ukuran lebar di sini
-                    "height": "300px" // Tambahkan ukuran tinggi di sini
-                });
                 $('#json-container').append(label);
                 $('#json-container').append(html);
-                $('#json-container').append(img);
             }, "json");
 
         })

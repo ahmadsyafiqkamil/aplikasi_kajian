@@ -1,16 +1,22 @@
+import io
+import os
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponse
 from django.views import generic
 from .forms import *
 import pandas as pd
 from django.utils.text import slugify
-from django.http import JsonResponse
 from .api import API
 from .models import *
 from django.contrib.auth.models import User
 from .serializers import *
 from rest_framework import serializers
 import json
+import matplotlib.pyplot as plt
+import urllib, base64
+from pathlib import Path
+from django.conf import settings
 
 
 # Create your views here.
@@ -25,7 +31,7 @@ def get_data_home(request):
     data = {
         'data': serializer.data
     }
-    return JsonResponse({'data': serializer.data})
+    return JsonResponse(data)
 
 
 def get_data_pd(request):
@@ -44,11 +50,35 @@ def get_data_pd(request):
             data_tuples.append(index + (value,))
 
         # Create pandas DataFrame with multi-index
-        # "tahun", "bulan", "vervar", "karakteristik", "data_key"
         df = pd.DataFrame(data_tuples, columns=['tahun', 'bulan', 'vervar', 'karakteristik', 'data_key', 'Data'])
         df = df.set_index(['tahun', 'bulan', 'vervar', 'karakteristik', 'data_key'])
 
-        return JsonResponse({'html': df.to_html(), 'label': data.label_var}, safe=False)
+        print(data.data)
+        print(df)
+        # create figure and axis objects
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        # plot data
+        df['Data'].plot(kind='bar', ax=ax)
+
+        # set plot title and axis labels
+        ax.set_title('Data Aktifitas Tahun 2016')
+        ax.set_xlabel('Karakteristik')
+        ax.set_ylabel('Nilai')
+
+        chart_filename = f"{request.user}_{data.label_var}_chart.png"
+        chart_path = Path(settings.MEDIA_ROOT) / chart_filename
+
+        fig.savefig(chart_path, dpi=300)
+        chart_url = os.path.join(settings.MEDIA_URL, chart_filename)
+
+        context = {
+            'html': df.to_html(),
+            'label': data.label_var,
+            "img": chart_url
+        }
+
+        return JsonResponse(context, safe=False)
 
 
 class BeritaView(LoginRequiredMixin, generic.TemplateView):
@@ -296,3 +326,7 @@ def simpan_data(request):
         )
         aktifitas.save()
         return JsonResponse({'hasil': "data tersimpan", 'label': label}, safe=False)
+
+
+class AnalisisDataView(LoginRequiredMixin, generic.TemplateView):
+    template_name = "content/data/analisis.html"

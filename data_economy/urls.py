@@ -10,6 +10,7 @@ urlpatterns = [
     path('_dynamic_data/', DynamicData.as_view(), name='dynamic_data'),
     path('_subject/', SubjectView.as_view(), name='subject'),
     path('_berita/', BeritaView.as_view(), name='berita'),
+    path('_analisis_data/', AnalisisDataView.as_view(), name='analisis_data'),
     path('_get_infografis/', get_infografis, name='get_infografis'),
     path('_get_press/', get_press_release, name='get_press'),
     path('_get_view_press/', get_view_press, name='get_view_press'),

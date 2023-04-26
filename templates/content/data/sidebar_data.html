@@ -19,3 +19,8 @@
         class="nav-link {% if request.resolver_match.app_name == 'data' and request.resolver_match.url_name == 'dynamic_data' %} active {% endif %}"
         href="{% url 'data:dynamic_data' %}"></i>Data Dinamis</a>
 </li>
+
+<li class="nav-item"><a
+        class="nav-link {% if request.resolver_match.app_name == 'data' and request.resolver_match.url_name == 'analisis_data' %} active {% endif %}"
+        href="{% url 'data:analisis_data' %}"></i>Analisis Data</a>
+</li>
