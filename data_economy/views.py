@@ -1,6 +1,4 @@
-import io
 import os
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponse
 from django.views import generic
@@ -8,13 +6,9 @@ from .forms import *
 import pandas as pd
 from django.utils.text import slugify
 from .api import API
-from .models import *
-from django.contrib.auth.models import User
 from .serializers import *
-from rest_framework import serializers
 import json
 import matplotlib.pyplot as plt
-import urllib, base64
 from pathlib import Path
 from django.conf import settings
 
@@ -62,11 +56,11 @@ def get_data_pd(request):
         df['Data'].plot(kind='bar', ax=ax)
 
         # set plot title and axis labels
-        ax.set_title('Data Aktifitas Tahun 2016')
+        ax.set_title(f'{data.label_var}')
         ax.set_xlabel('Karakteristik')
         ax.set_ylabel('Nilai')
 
-        chart_filename = f"{request.user}_{data.label_var}_chart.png"
+        chart_filename = f"{request.user}_chart.png"
         chart_path = Path(settings.MEDIA_ROOT) / chart_filename
 
         fig.savefig(chart_path, dpi=300)
@@ -251,10 +245,13 @@ def get_data(request):
                     f"domain: {domain}, subject: {subject}, var_id: {var_id}, th_id: {th_id}, turvar_id: {turvar_id}, turth_id: {turth_id}, vervar_id: {vervar_id}")
                 data = api.get_list(model=model, domain=domain, subject=subject, var_id=var_id, th_id=th_id,
                                     turvar_id=turvar_id, turth_id=turth_id, vervar_id=vervar_id)
-                label = data["var"][0]["label"]
-                df = api.data_dinamis_transform_to_pd(data)
+                if data:
+                    label = data["var"][0]["label"]
+                    df = api.data_dinamis_transform_to_pd(data)
 
-                return JsonResponse({'html': df.to_html(), 'label': label}, safe=False)
+                    return JsonResponse({'html': df.to_html(), 'label': label}, safe=False)
+                else:
+                    return JsonResponse({'html': "html", 'label': "label"}, safe=False)
 
     else:
         return HttpResponse("Invalid request method")
@@ -330,3 +327,7 @@ def simpan_data(request):
 
 class AnalisisDataView(LoginRequiredMixin, generic.TemplateView):
     template_name = "content/data/analisis.html"
+
+
+def get_column(request):
+    pass

@@ -113,10 +113,12 @@ class API():
                     path += f"th/{th_id}/"
 
                 url = f"{self.url}list/model/{model}/domain/{domain}/var/{var_id}/{path}key/{self.key}"
-                print(url)
                 data = requests.get(url).json()
-                # dt = self.data_dinamis_transform(data)
-                return data
+                if data["data-availability"] == "available":
+                    # dt = self.data_dinamis_transform(data)
+                    return data
+                else:
+                    return None
 
             case "news":
                 pass
@@ -198,5 +200,3 @@ class API():
         # Menggabungkan semua dataframe menjadi satu dataframe dengan pd.concat()
         df = pd.concat(dfs)
         return df
-
-
