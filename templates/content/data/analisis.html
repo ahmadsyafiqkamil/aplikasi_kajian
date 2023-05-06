@@ -10,7 +10,7 @@
 {% block content %}
 
     <div class="container">
-        <h1>Halaman Data</h1>
+        <h1>Halaman Analisis Data</h1>
         {% csrf_token %}
         <div data-label="Example" class="df-example demo-table">
             <table id="example4" class="table">
@@ -28,8 +28,11 @@
 
         <br>
         <div data-label="Data Dinamis" class="df-example demo-table">
-            <div id="json-container"></div>
+
         </div>
+        {#        <div data-label="Data Dinamis" class="df-example demo-table">#}
+        {#            <div id="json-container"></div>#}
+        {#        </div>#}
 
 
     </div>
@@ -95,18 +98,8 @@
                     csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
 
                 }
-            $.post("/data_get_data_pd/", data, function (response) {
-                $('#json-container').empty();
-                const html = $.parseHTML(response.html);
-                const label = $("<h3>").text("Data Tabel:" + response.label);
-                const img = $("<img>").attr({
-                    "src": response.img + "?t=" + Date.now(),
-                    "width": "500px", // Tambahkan ukuran lebar di sini
-                    "height": "300px" // Tambahkan ukuran tinggi di sini
-                });
-                $('#json-container').append(label);
-                $('#json-container').append(html);
-                $('#json-container').append(img);
+            $.post("/data_get_column/", data, function (response) {
+                console.log(response)
             }, "json");
 
         })

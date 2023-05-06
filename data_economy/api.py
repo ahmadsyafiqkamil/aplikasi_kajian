@@ -42,7 +42,7 @@ class API():
             case 'subject':
                 "https://webapi.bps.go.id/v1/api/list/model/subject/domain/0000/key/2ff0d1794d793a4be0a72124a029172f/"
                 url = f"{self.url}list/model/{model}/domain/{domain}/page/{page}/key/{self.key}"
-                print(url)
+                print("subject", url)
                 data = requests.get(url).json()
                 dt = self.data_transform(data)
                 return dt
@@ -51,7 +51,7 @@ class API():
                 "https://webapi.bps.go.id/v1/api/list/model/var/domain/0000/subject/23/page/1/key/2ff0d1794d793a4be0a72124a029172f/"
                 subject = kwargs.get("subject")
                 url = f"{self.url}list/model/{model}/domain/{domain}/subject/{subject}/page/{page}/key/{self.key}"
-                print(url)
+                print("var", url)
                 data = requests.get(url).json()
                 dt = self.data_transform(data)
                 return dt
@@ -60,7 +60,7 @@ class API():
                 "https://webapi.bps.go.id/v1/api/list/model/turvar/domain/0000/var/56/page/1/key/2ff0d1794d793a4be0a72124a029172f/"
                 id_var = kwargs.get("id_var")
                 url = f"{self.url}list/model/{model}/domain/{domain}/var/{id_var}/page/{page}/key/{self.key}"
-                print(url)
+                print("turvar", url)
                 data = requests.get(url).json()
                 dt = self.data_transform(data)
                 return dt
@@ -69,7 +69,7 @@ class API():
                 "https://webapi.bps.go.id/v1/api/list/model/turth/domain/0000/var/56/page/1/key/2ff0d1794d793a4be0a72124a029172f/"
                 id_var = kwargs.get("id_var")
                 url = f"{self.url}list/model/{model}/domain/{domain}/var/{id_var}/page/{page}/key/{self.key}"
-                print(url)
+                print("turth", url)
                 data = requests.get(url).json()
                 dt = self.data_transform(data)
                 return dt
@@ -78,7 +78,7 @@ class API():
                 "https://webapi.bps.go.id/v1/api/list/model/th/domain/0000/var/457/key/2ff0d1794d793a4be0a72124a029172f/"
                 id_var = kwargs.get("id_var")
                 url = f"{self.url}list/model/{model}/domain/{domain}/var/{id_var}/page/{page}/key/{self.key}"
-                print(url)
+                print("th", url)
                 data = requests.get(url).json()
                 dt = self.data_transform(data)
                 return dt
@@ -87,7 +87,7 @@ class API():
                 "https://webapi.bps.go.id/v1/api/list/model/vervar/domain/0000/var/56/page/1/key/2ff0d1794d793a4be0a72124a029172f/"
                 id_var = kwargs.get("id_var")
                 url = f"{self.url}list/model/{model}/domain/{domain}/var/{id_var}/page/{page}/key/{self.key}"
-                print(url)
+                print("vervar", url)
                 data = requests.get(url).json()
                 dt = self.data_transform(data)
                 return dt
@@ -103,16 +103,17 @@ class API():
                 vervar_id = kwargs.get('vervar_id')
 
                 path = ""
-                if turvar_id is not "0":
+                if turvar_id != "0":
                     path += f"turvar/{turvar_id}/"
-                if turth_id is not "0":
+                if turth_id != "0":
                     path += f"turth/{turth_id}/"
-                if vervar_id is not "0":
+                if vervar_id != "0":
                     path += f"vervar/{vervar_id}/"
-                if th_id is not "0":
+                if th_id != "0":
                     path += f"th/{th_id}/"
 
                 url = f"{self.url}list/model/{model}/domain/{domain}/var/{var_id}/{path}key/{self.key}"
+                print("data", url)
                 data = requests.get(url).json()
                 if data["data-availability"] == "available":
                     # dt = self.data_dinamis_transform(data)
@@ -177,10 +178,9 @@ class API():
                             turvar = karakteristik_labels[tv["val"]]
                             if turvar not in result[tahun][bulan][vervar]:
                                 result[tahun][bulan][vervar][turvar] = {}
-
-                                for k, d in response["datacontent"].items():
-                                    if k not in result[tahun][bulan][vervar][turvar]:
-                                        result[tahun][bulan][vervar][turvar][k] = {}
+                            id = f'{v["val"]}{var_val}{tv["val"]}{t["val"]}{tt["val"]}'
+                            for k, d in response["datacontent"].items():
+                                if id == k:
                                     result[tahun][bulan][vervar][turvar][k] = d
 
         # Mengubah dictionary menjadi pandas dataframe

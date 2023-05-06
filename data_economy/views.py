@@ -330,4 +330,9 @@ class AnalisisDataView(LoginRequiredMixin, generic.TemplateView):
 
 
 def get_column(request):
-    pass
+    if request.method == "POST":
+        id = request.POST.get('id')
+        data = AktifitasData.objects.get(id=id).data_data
+        print(data["vervar"])
+        print(data["datacontent"])
+        return JsonResponse({'hasil': "data tersimpan"}, safe=False)
