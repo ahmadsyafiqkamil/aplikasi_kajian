@@ -1,6 +1,8 @@
 {% extends 'base/base.html' %}
 {% load static %}
+{% load plotly_dash %}
 {% block css %}
+    {% plotly_header %}
     <link href="{% static 'lib/select2/css/select2.min.css' %}" rel="stylesheet">
     <link href="{% static 'lib/ion-rangeslider/css/ion.rangeSlider.min.css' %}" rel="stylesheet">
     <link href="{% static 'lib/datatables.net-dt/css/jquery.dataTables.min.css' %}" rel="stylesheet">
@@ -31,6 +33,11 @@
         </div>
 
 
+        <div data-label="Dashboard" class="df-example demo-table">
+{#            {% plotly_direct name="SimpleExample" %}#}
+        </div>
+
+
     </div>
 {% endblock %}
 
@@ -45,7 +52,7 @@
     <script src="{% static 'lib/select2/js/select2.min.js' %}"></script>
     <script src="{% static 'lib/jqueryui/jquery-ui.min.js' %}"></script>
 
-
+    {% plotly_footer %}
     <script type="text/javascript">
         $(function () {
             'use strict'

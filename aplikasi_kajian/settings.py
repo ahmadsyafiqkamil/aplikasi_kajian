@@ -45,6 +45,10 @@ INSTALLED_APPS = [
     # 'custom_tags',
     'notifications',
     'rest_framework',
+    'django_plotly_dash.apps.DjangoPlotlyDashConfig',
+    'channels',
+    'channels_redis',
+    # 'dpd_static_support',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +58,10 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+
+    'django_plotly_dash.middleware.BaseMiddleware',
+    'django_plotly_dash.middleware.ExternalRedirectionMiddleware',
+
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -78,6 +86,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'aplikasi_kajian.wsgi.application'
 
+ASGI_APPLICATION = 'aplikasi_kajian.routing.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -161,4 +170,49 @@ DJANGO_NOTIFICATIONS_CONFIG = {
     'SOFT_DELETE': True,
     # 'PAGINATE_BY': True,
 
+}
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379), ],
+        },
+    },
+}
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+
+    'django_plotly_dash.finders.DashAssetFinder',
+    'django_plotly_dash.finders.DashComponentFinder',
+    'django_plotly_dash.finders.DashAppDirectoryFinder',
+]
+
+PLOTLY_COMPONENTS = [
+
+    'dash_bootstrap_components',
+    'dpd_components',
+    'dpd_static_support',
+]
+
+PLOTLY_DASH = {
+    "ws_route": "ws/channel",
+
+    "insert_demo_migrations": True,  # Insert model instances used by the demo
+
+    "http_poke_enabled": True,  # Flag controlling availability of direct-to-messaging http endpoint
+
+    "view_decorator": None,  # Specify a function to be used to wrap each of the dpd view functions
+
+    "cache_arguments": True,  # True for cache, False for session-based argument propagation
+
+    # "serve_locally" : True, # True to serve assets locally, False to use their unadulterated urls (eg a CDN)
+
+    "stateless_loader": "demo.scaffold.stateless_app_loader",
 }

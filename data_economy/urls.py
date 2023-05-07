@@ -21,6 +21,7 @@ urlpatterns = [
     path('_get_data_home/', get_data_home, name='get_data_home'),
     path('_get_data_pd/', get_data_pd, name='get_data_pd'),
     path('_get_column/', get_column, name='get_column'),
+    path('_example/', example, name='example'),
 
     # path('_list_data/<str:sbj>', ListData.as_view(), name='ListData'),
 ]

@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include('kajian.urls')),
     path('data', include('data_economy.urls')),
     path('', include('django.contrib.auth.urls')),
+    path('django_plotly_dash/', include('django_plotly_dash.urls')),
     path('inbox/notifications/', include(notifications.urls, namespace='notifications'))
 
 ]

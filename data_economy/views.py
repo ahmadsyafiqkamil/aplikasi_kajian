@@ -1,6 +1,7 @@
 import os
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponse
+from django.shortcuts import render
 from django.views import generic
 from .forms import *
 import pandas as pd
@@ -11,9 +12,17 @@ import json
 import matplotlib.pyplot as plt
 from pathlib import Path
 from django.conf import settings
+from plotly.offline import plot
+import plotly.graph_objects as go
+from . import dash_app
 
 
 # Create your views here.
+# pd.options.plotting.backend = "plotly"
+
+def example(request):
+    return render(request, 'example.html')
+
 
 class HomeView(LoginRequiredMixin, generic.TemplateView):
     template_name = 'content/data/data.html'
@@ -49,6 +58,7 @@ def get_data_pd(request):
 
         print(data.data)
         print(df)
+
         # create figure and axis objects
         fig, ax = plt.subplots(figsize=(10, 6))
 
@@ -319,7 +329,8 @@ def simpan_data(request):
             user=request.user,
             data=json_data,
             label_var=label,
-            data_data=data_data
+            # data_data=data_data
+            data_data=data
         )
         aktifitas.save()
         return JsonResponse({'hasil': "data tersimpan", 'label': label}, safe=False)
