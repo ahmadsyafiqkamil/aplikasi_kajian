@@ -12,9 +12,10 @@ import json
 import matplotlib.pyplot as plt
 from pathlib import Path
 from django.conf import settings
-from plotly.offline import plot
 import plotly.graph_objects as go
-from . import dash_app
+import plotly.offline as opy
+import plotly.io as pio
+from plotly.offline import init_notebook_mode, iplot
 
 
 # Create your views here.
@@ -41,6 +42,7 @@ def get_data_pd(request):
     if request.method == 'POST':
         id = request.POST.get('id')
         data = AktifitasData.objects.get(pk=id)
+        # data_data = json.loads(data.data_data)
         data_dict = json.loads(data.data)
         data_tuples = []
 
@@ -55,9 +57,9 @@ def get_data_pd(request):
         # Create pandas DataFrame with multi-index
         df = pd.DataFrame(data_tuples, columns=['tahun', 'bulan', 'vervar', 'karakteristik', 'data_key', 'Data'])
         df = df.set_index(['tahun', 'bulan', 'vervar', 'karakteristik', 'data_key'])
-
-        print(data.data)
-        print(df)
+        df_reset = df.reset_index()
+        # print(data.data)
+        print(df_reset["Data"])
 
         # create figure and axis objects
         fig, ax = plt.subplots(figsize=(10, 6))
@@ -76,10 +78,12 @@ def get_data_pd(request):
         fig.savefig(chart_path, dpi=300)
         chart_url = os.path.join(settings.MEDIA_URL, chart_filename)
 
+        plot = plot_view(df_reset)
         context = {
             'html': df.to_html(),
             'label': data.label_var,
-            "img": chart_url
+            "img": chart_url,
+            "plot": plot
         }
 
         return JsonResponse(context, safe=False)
@@ -312,7 +316,7 @@ def simpan_data(request):
 
         dt = api.data_dinamis_transform_to_pd(data)
         label = data["var"][0]["label"]
-        json_data = dt.to_json()
+        # json_data = dt.to_json()
 
         data_data = {
             "var": data["var"],
@@ -327,10 +331,10 @@ def simpan_data(request):
 
         aktifitas = AktifitasData(
             user=request.user,
-            data=json_data,
+            data=dt.to_json(),
             label_var=label,
             # data_data=data_data
-            data_data=data
+            data_data=data_data
         )
         aktifitas.save()
         return JsonResponse({'hasil': "data tersimpan", 'label': label}, safe=False)
@@ -347,3 +351,56 @@ def get_column(request):
         print(data["vervar"])
         print(data["datacontent"])
         return JsonResponse({'hasil': "data tersimpan"}, safe=False)
+
+
+def plot_view(df):
+    fig = go.Figure()
+    print(df["tahun"])
+
+    # menambahkan data ke dalam plot
+    fig.add_trace(go.Scatter(x=df['tahun'], y=df['Data'], mode='lines'))
+
+    # menentukan layout plot
+    fig.update_layout(title='Seluruh Data', xaxis_title='Tahun', yaxis_title='Data')
+
+    # membuat dropdown
+    karakteristik = df['karakteristik'].unique()
+    vervar = df['vervar'].unique()
+    data_values = df['Data'].unique()
+
+    fig.update_layout(
+        updatemenus=[
+            go.layout.Updatemenu(
+                buttons=[
+                            {
+                                'label': 'Seluruh Data',
+                                'method': 'update',
+                                'args': [
+                                    {'x': [df['tahun']],
+                                     'y': [df['Data']],
+                                     'name': 'Seluruh Data'
+                                     },
+                                    {'xaxis.title': 'Tahun', 'yaxis.title': 'Data'}
+                                ]
+                            }
+                        ] + [
+                            {
+                                'label': f"{k} - {v}",
+                                'method': 'update',
+                                'args': [
+                                    {'x': [df.loc[(df['karakteristik'] == k) & (df['vervar'] == v)]['tahun']],
+                                     'y': [df.loc[(df['karakteristik'] == k) & (df['vervar'] == v)]['Data']],
+                                     'name': 'Data ' + k + ' ' + v
+                                     },
+                                    {'xaxis.title': 'Tahun', 'yaxis.title': 'Data'}
+                                ]
+                            } for k in karakteristik for v in vervar
+                        ]
+            )
+        ]
+    )
+    fig_json = pio.to_json(fig)
+    # plot_html = opy.plot(fig, auto_open=False, output_type='div')
+    print(fig_json)
+    # context = {'plot': plot_html}
+    return fig_json
