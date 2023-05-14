@@ -20,7 +20,7 @@
                 <tr>
                     <th class="wd-20p">Label Data</th>
                     <th class="wd-20p">Data</th>
-                    <th class="wd-20p">Variabel</th>
+{#                    <th class="wd-20p">Variabel</th>#}
                     <th class="wd-25p">Aksi</th>
                 </tr>
                 </thead>
@@ -45,6 +45,7 @@
 
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="{% static 'lib/prismjs/prism.js' %}"></script>
     <script src="{% static 'lib/datatables.net/js/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'lib/datatables.net-dt/js/dataTables.dataTables.min.js' %}"></script>
@@ -75,13 +76,22 @@
                             return '<button class="btn btn-outline-primary btn-data-id" data-id="' + idString + '">Lihat Data</input>';
                         }
                     },
+                    /*
                     {
                         "data": "data_data",
                         render: function (data, type, row) {
                             return '<span style="white-space:normal">' + data['var'][0]['label'] + "</span>";
                         }
                     },
-                    {"data": "id"}
+
+                     */
+                    {
+                        "data": "id",
+                        "render": function (data, type, full, meta) {
+                            var idString = data.toString();
+                            return '<button class="btn btn-outline-primary btn-download-id" data-id="' + idString + '">Download Data</input>';
+                        }
+                    },
                 ],
                 language: {
                     searchPlaceholder: 'Search...',
@@ -111,10 +121,26 @@
                 });
                 $('#json-container').append(label);
                 $('#json-container').append(html);
-                $('#json-container').append(img);
+                {#$('#json-container').append(img);#}
                 console.log(response.plot)
                 var figure_data = JSON.parse(response.plot);
                 Plotly.newPlot('plotly-figure', figure_data.data, figure_data.layout);
+            }, "json");
+
+        })
+
+        $(document).on('click', '.btn-download-id', function () {
+            var id = $(this).data('id');
+            var data =
+                {
+                    id: id,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+
+                }
+            $.post("/data_download_data/", data, function (response) {
+                console.log(response)
+                var blob = new Blob([response], {type: "text/csv;charset=utf-8;"});
+                saveAs(blob, "Dataframe Pandas.csv");
             }, "json");
 
         })

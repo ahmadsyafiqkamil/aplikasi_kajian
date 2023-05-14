@@ -21,6 +21,8 @@ urlpatterns = [
     path('_get_data_home/', get_data_home, name='get_data_home'),
     path('_get_data_pd/', get_data_pd, name='get_data_pd'),
     path('_get_column/', get_column, name='get_column'),
+    path('_get_predict/', get_predict, name='data_get_predict'),
+    path('_download_data/', download_data, name='_download_data'),
     path('_example/', example, name='example'),
 
     # path('_list_data/<str:sbj>', ListData.as_view(), name='ListData'),

@@ -4,18 +4,11 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.views import generic
 from .forms import *
-import pandas as pd
 from django.utils.text import slugify
 from .api import API
 from .serializers import *
 import json
-import matplotlib.pyplot as plt
-from pathlib import Path
-from django.conf import settings
-import plotly.graph_objects as go
-import plotly.offline as opy
-import plotly.io as pio
-from plotly.offline import init_notebook_mode, iplot
+from .tools import *
 
 
 # Create your views here.
@@ -44,45 +37,47 @@ def get_data_pd(request):
         data = AktifitasData.objects.get(pk=id)
         # data_data = json.loads(data.data_data)
         data_dict = json.loads(data.data)
-        data_tuples = []
 
-        # Iterate through each key in data_dict and convert to tuple
-        for key, value in data_dict['data'].items():
-            # Remove brackets and quotes from key string, and split on comma
-            key_parts = key.replace('\'', '').replace('(', '').replace(')', '').split(',')
-            # Convert each part of key to a tuple
-            index = tuple([x.strip() for x in key_parts])
-            data_tuples.append(index + (value,))
+        df_reset = json_to_pd(data_dict)
+        # data_tuples = []
+        #
+        # # Iterate through each key in data_dict and convert to tuple
+        # for key, value in data_dict['data'].items():
+        #     # Remove brackets and quotes from key string, and split on comma
+        #     key_parts = key.replace('\'', '').replace('(', '').replace(')', '').split(',')
+        #     # Convert each part of key to a tuple
+        #     index = tuple([x.strip() for x in key_parts])
+        #     data_tuples.append(index + (value,))
+        #
+        # # Create pandas DataFrame with multi-index
+        # df = pd.DataFrame(data_tuples, columns=['tahun', 'bulan', 'vervar', 'karakteristik', 'data_key', 'Data'])
+        # df = df.set_index(['tahun', 'bulan', 'vervar', 'karakteristik', 'data_key'])
+        # df_reset = df.reset_index()
 
-        # Create pandas DataFrame with multi-index
-        df = pd.DataFrame(data_tuples, columns=['tahun', 'bulan', 'vervar', 'karakteristik', 'data_key', 'Data'])
-        df = df.set_index(['tahun', 'bulan', 'vervar', 'karakteristik', 'data_key'])
-        df_reset = df.reset_index()
-        # print(data.data)
-        print(df_reset["Data"])
+        # print(df_reset["Data"])
 
         # create figure and axis objects
-        fig, ax = plt.subplots(figsize=(10, 6))
+        # fig, ax = plt.subplots(figsize=(10, 6))
 
         # plot data
-        df['Data'].plot(kind='bar', ax=ax)
-
-        # set plot title and axis labels
-        ax.set_title(f'{data.label_var}')
-        ax.set_xlabel('Karakteristik')
-        ax.set_ylabel('Nilai')
-
-        chart_filename = f"{request.user}_chart.png"
-        chart_path = Path(settings.MEDIA_ROOT) / chart_filename
-
-        fig.savefig(chart_path, dpi=300)
-        chart_url = os.path.join(settings.MEDIA_URL, chart_filename)
+        # df['Data'].plot(kind='bar', ax=ax)
+        #
+        # # set plot title and axis labels
+        # ax.set_title(f'{data.label_var}')
+        # ax.set_xlabel('Karakteristik')
+        # ax.set_ylabel('Nilai')
+        #
+        # chart_filename = f"{request.user}_chart.png"
+        # chart_path = Path(settings.MEDIA_ROOT) / chart_filename
+        #
+        # fig.savefig(chart_path, dpi=300)
+        # chart_url = os.path.join(settings.MEDIA_URL, chart_filename)
 
         plot = plot_view(df_reset)
         context = {
-            'html': df.to_html(),
+            'html': df_reset.to_html(),
             'label': data.label_var,
-            "img": chart_url,
+            # "img": chart_url,
             "plot": plot
         }
 
@@ -175,6 +170,29 @@ def get_subject(request):
         return JsonResponse(data, safe=False)
     else:
         return HttpResponse("Invalid request method")
+
+
+class AnalisisDataView(LoginRequiredMixin, generic.TemplateView):
+    template_name = "content/data/analisis.html"
+
+
+def get_column(request):
+    if request.method == "POST":
+        id = request.POST.get('id')
+        data = AktifitasData.objects.get(id=id)
+        data_dict = json.loads(data.data)
+        # df_reset = json_to_pd(data_dict)
+        data_data = data.data_data
+
+        data_kolom = {
+            # "var": data_data["tahun"],
+            "tahun": data_data["tahun"],
+            "turvar": data_data["turvar"],
+            "vervar": data_data["vervar"],
+            "turtahun": data_data["turtahun"],
+        }
+
+        return JsonResponse({'kolom': data_kolom}, safe=False)
 
 
 class DynamicData(LoginRequiredMixin, generic.TemplateView):
@@ -340,67 +358,59 @@ def simpan_data(request):
         return JsonResponse({'hasil': "data tersimpan", 'label': label}, safe=False)
 
 
-class AnalisisDataView(LoginRequiredMixin, generic.TemplateView):
-    template_name = "content/data/analisis.html"
-
-
-def get_column(request):
+def download_data(request):
     if request.method == "POST":
         id = request.POST.get('id')
-        data = AktifitasData.objects.get(id=id).data_data
-        print(data["vervar"])
-        print(data["datacontent"])
-        return JsonResponse({'hasil': "data tersimpan"}, safe=False)
+        data = AktifitasData.objects.get(id=id)
+        data_dict = json.loads(data.data)
+        df = json_to_pd(data_dict)
+        print(id, df)
+
+        filename = f'{slugify("Dataframe Pandas")}.csv'
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        # Write dataframe to response
+        df.to_csv(path_or_buf=response, index=True, encoding='utf-8')
+
+        return response
 
 
-def plot_view(df):
-    fig = go.Figure()
-    print(df["tahun"])
+def get_predict(request):
+    if request.method == "POST":
+        id_data = request.POST.get('id')
+        checkboxes = request.POST.getlist('checkboxes[]')
 
-    # menambahkan data ke dalam plot
-    fig.add_trace(go.Scatter(x=df['tahun'], y=df['Data'], mode='lines'))
+        data = AktifitasData.objects.get(id=id_data)
+        data_dict = json.loads(data.data)
+        df = json_to_pd(data_dict)
 
-    # menentukan layout plot
-    fig.update_layout(title='Seluruh Data', xaxis_title='Tahun', yaxis_title='Data')
+        filter = ""
+        for value in checkboxes:
 
-    # membuat dropdown
-    karakteristik = df['karakteristik'].unique()
-    vervar = df['vervar'].unique()
-    data_values = df['Data'].unique()
+            if value == 'tahun':
+                filter += f"df['tahun'] == 'tahun' & "
+            # elif value == 'bulan':
+            #     filter +=(df['tahun'] == "tahun")
+            # elif value == 'vervar':
+            #     filter +=(df['tahun'] == "tahun")
+            # elif value == 'karakteristik':
+            #     filter +=(df['tahun'] == "tahun")
 
-    fig.update_layout(
-        updatemenus=[
-            go.layout.Updatemenu(
-                buttons=[
-                            {
-                                'label': 'Seluruh Data',
-                                'method': 'update',
-                                'args': [
-                                    {'x': [df['tahun']],
-                                     'y': [df['Data']],
-                                     'name': 'Seluruh Data'
-                                     },
-                                    {'xaxis.title': 'Tahun', 'yaxis.title': 'Data'}
-                                ]
-                            }
-                        ] + [
-                            {
-                                'label': f"{k} - {v}",
-                                'method': 'update',
-                                'args': [
-                                    {'x': [df.loc[(df['karakteristik'] == k) & (df['vervar'] == v)]['tahun']],
-                                     'y': [df.loc[(df['karakteristik'] == k) & (df['vervar'] == v)]['Data']],
-                                     'name': 'Data ' + k + ' ' + v
-                                     },
-                                    {'xaxis.title': 'Tahun', 'yaxis.title': 'Data'}
-                                ]
-                            } for k in karakteristik for v in vervar
-                        ]
-            )
-        ]
-    )
-    fig_json = pio.to_json(fig)
-    # plot_html = opy.plot(fig, auto_open=False, output_type='div')
-    print(fig_json)
-    # context = {'plot': plot_html}
-    return fig_json
+        if filter.endswith("& "):
+            filter = filter[:-3]
+
+        print(filter)
+        if filter:
+            data_filtered = df.loc[filter]
+        else:
+            data_filtered = df
+
+        print(data_filtered)
+        plot = plot_view(data_filtered)
+
+        context = {
+            "plot": plot
+        }
+
+        return JsonResponse(context, safe=False)
