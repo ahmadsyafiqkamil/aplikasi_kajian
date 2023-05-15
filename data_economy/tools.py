@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 import plotly.offline as opy
 import plotly.io as pio
 from plotly.offline import init_notebook_mode, iplot
+from statsmodels.tsa.api import ExponentialSmoothing
 
 
 def json_to_pd(data_dict):
@@ -74,3 +75,7 @@ def plot_view(df):
     # plot_html = opy.plot(fig, auto_open=False, output_type='div')
     # context = {'plot': plot_html}
     return fig_json
+
+
+def predict(df):
+    pass

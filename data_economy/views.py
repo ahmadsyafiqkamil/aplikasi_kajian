@@ -39,39 +39,8 @@ def get_data_pd(request):
         data_dict = json.loads(data.data)
 
         df_reset = json_to_pd(data_dict)
-        # data_tuples = []
-        #
-        # # Iterate through each key in data_dict and convert to tuple
-        # for key, value in data_dict['data'].items():
-        #     # Remove brackets and quotes from key string, and split on comma
-        #     key_parts = key.replace('\'', '').replace('(', '').replace(')', '').split(',')
-        #     # Convert each part of key to a tuple
-        #     index = tuple([x.strip() for x in key_parts])
-        #     data_tuples.append(index + (value,))
-        #
-        # # Create pandas DataFrame with multi-index
-        # df = pd.DataFrame(data_tuples, columns=['tahun', 'bulan', 'vervar', 'karakteristik', 'data_key', 'Data'])
-        # df = df.set_index(['tahun', 'bulan', 'vervar', 'karakteristik', 'data_key'])
-        # df_reset = df.reset_index()
 
-        # print(df_reset["Data"])
 
-        # create figure and axis objects
-        # fig, ax = plt.subplots(figsize=(10, 6))
-
-        # plot data
-        # df['Data'].plot(kind='bar', ax=ax)
-        #
-        # # set plot title and axis labels
-        # ax.set_title(f'{data.label_var}')
-        # ax.set_xlabel('Karakteristik')
-        # ax.set_ylabel('Nilai')
-        #
-        # chart_filename = f"{request.user}_chart.png"
-        # chart_path = Path(settings.MEDIA_ROOT) / chart_filename
-        #
-        # fig.savefig(chart_path, dpi=300)
-        # chart_url = os.path.join(settings.MEDIA_URL, chart_filename)
 
         plot = plot_view(df_reset)
         context = {
