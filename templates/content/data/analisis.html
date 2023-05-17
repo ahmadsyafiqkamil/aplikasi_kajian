@@ -28,44 +28,44 @@
 
         <br>
 
-                <div class="df-example demo-table">
-                    <form method="post" id="kolom-form" action="#">
-                        <div class="form-group">
-                            <label for="tahun">Pilih Tahun:</label>
-                            <select id="tahun" class="form-control"></select>
-                            <label for="bulan">Pilih Bulan/Turunan Tahun:</label>
-                            <select id="bulan" class="form-control"></select>
-                            <label for="vervar">Pilih Vervar:</label>
-                            <select id="vervar" class="form-control"></select>
-                            <label for="karakteristik">Pilih karakteristik:</label>
-                            <select id="karakteristik" class="form-control"></select>
-                            <input type="hidden" name="id_data" id="id_data">
-                        </div>
-                        <button class="btn btn-primary" type="submit" id="kolom-button">Submit</button>
-                    </form>
-
+        <div class="df-example demo-table">
+            <form method="post" id="kolom-form" action="#">
+                <div class="form-group">
+                                                <label for="tahun">Pilih Tahun:</label>
+                                                <select id="tahun" class="form-control"></select>
+                    <label for="bulan">Pilih Bulan/Turunan Tahun:</label>
+                    <select id="bulan" class="form-control" name="bulan"></select>
+                    <label for="vervar">Pilih Vervar:</label>
+                    <select id="vervar" class="form-control" name="vervar"></select>
+                    <label for="karakteristik">Pilih karakteristik:</label>
+                    <select id="karakteristik" class="form-control" name="karakteristik"></select>
+                    <input type="hidden" name="id_data" id="id_data">
                 </div>
-{#        <div class="df-example demo-table">#}
-{#            <form method="post" id="kolom-form" action="#">#}
-{#                <div class="form-group">#}
-{#                    <label for="tahun">Pilih Tahun:</label>#}
-{#                    <input type="checkbox" id="tahun" class="form-control" name="checkbox" value="tahun">#}
-{##}
-{#                    <label for="bulan">Pilih Bulan/Turunan Tahun:</label>#}
-{#                    <input type="checkbox" id="bulan" class="form-control" name="checkbox" value="bulan">#}
-{##}
-{#                    <label for="vervar">Pilih Vervar:</label>#}
-{#                    <input type="checkbox" id="vervar" class="form-control" name="checkbox" value="vervar">#}
-{##}
-{#                    <label for="karakteristik">Pilih karakteristik:</label>#}
-{#                    <input type="checkbox" id="karakteristik" class="form-control" name="checkbox"#}
-{#                           value="karakteristik">#}
-{##}
-{#                    <input type="hidden" name="id_data" id="id_data">#}
-{#                </div>#}
-{#                <button class="btn btn-primary" type="submit" id="kolom-button">Submit</button>#}
-{#            </form>#}
-{#        </div>#}
+                <button class="btn btn-primary" type="submit" id="kolom-button">Submit</button>
+            </form>
+
+        </div>
+        {#        <div class="df-example demo-table">#}
+        {#            <form method="post" id="kolom-form" action="#">#}
+        {#                <div class="form-group">#}
+        {#                    <label for="tahun">Pilih Tahun:</label>#}
+        {#                    <input type="checkbox" id="tahun" class="form-control" name="checkbox" value="tahun">#}
+        {##}
+        {#                    <label for="bulan">Pilih Bulan/Turunan Tahun:</label>#}
+        {#                    <input type="checkbox" id="bulan" class="form-control" name="checkbox" value="bulan">#}
+        {##}
+        {#                    <label for="vervar">Pilih Vervar:</label>#}
+        {#                    <input type="checkbox" id="vervar" class="form-control" name="checkbox" value="vervar">#}
+        {##}
+        {#                    <label for="karakteristik">Pilih karakteristik:</label>#}
+        {#                    <input type="checkbox" id="karakteristik" class="form-control" name="checkbox"#}
+        {#                           value="karakteristik">#}
+        {##}
+        {#                    <input type="hidden" name="id_data" id="id_data">#}
+        {#                </div>#}
+        {#                <button class="btn btn-primary" type="submit" id="kolom-button">Submit</button>#}
+        {#            </form>#}
+        {#        </div>#}
 
 
         <div data-label="Hasil Prediksi" class="df-example demo-table">
@@ -131,21 +131,35 @@
         $('#kolom-form').submit(function (event) {
             event.preventDefault(); // hindari form submit secara normal
             var id_data = $('#id_data').val();
+            /*
             var checkboxes = $('input[name="checkbox"]:checked').map(function () {
                 return $(this).val();
             }).get();
-
             console.log(checkboxes)
-           var data =
+             */
+
+            var tahun = $("#tahun").val();
+            var bulan = $("#bulan").val();
+            var vervar = $("#vervar").val();
+            var karakteristik = $("#karakteristik").val();
+
+            console.log(vervar)
+            var data =
                 {
                     id: id_data,
                     csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-                    checkboxes:checkboxes
+                    tahun: tahun,
+                    bulan: bulan,
+                    vervar: vervar,
+                    karakteristik: karakteristik
+                    {#checkboxes:checkboxes#}
 
                 }
 
             $.post("/data_get_predict/", data, function (response) {
-                console.log(response)
+                console.log(response.tabel)
+                var figure_data = JSON.parse(response.plot);
+                Plotly.newPlot('plotly-figure', figure_data.data, figure_data.layout);
             });
 
         });
@@ -189,6 +203,8 @@
                     tahun_dropdown.add(option);
                 })
 
+
+
                 bulan.forEach(item => {
                     const option = document.createElement("option");
                     option.value = item.label;
@@ -212,7 +228,6 @@
 
 
             }, "json");
-
 
 
         })

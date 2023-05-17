@@ -348,37 +348,46 @@ def download_data(request):
 def get_predict(request):
     if request.method == "POST":
         id_data = request.POST.get('id')
-        checkboxes = request.POST.getlist('checkboxes[]')
+        # checkboxes = request.POST.getlist('checkboxes')
 
         data = AktifitasData.objects.get(id=id_data)
         data_dict = json.loads(data.data)
         df = json_to_pd(data_dict)
+        # print(df)
+        tahun = request.POST.get('tahun')
+        bulan = request.POST.get('bulan')
+        vervar = request.POST.get('vervar')
+        karakteristik = request.POST.get('karakteristik')
 
-        filter = ""
-        for value in checkboxes:
+        filters = []
 
-            if value == 'tahun':
-                filter += f"df['tahun'] == 'tahun' & "
-            # elif value == 'bulan':
-            #     filter +=(df['tahun'] == "tahun")
-            # elif value == 'vervar':
-            #     filter +=(df['tahun'] == "tahun")
-            # elif value == 'karakteristik':
-            #     filter +=(df['tahun'] == "tahun")
+        if tahun != "0":
+            filters.append(df['tahun'] == tahun)
 
-        if filter.endswith("& "):
-            filter = filter[:-3]
+        if bulan != "0":
+            filters.append(df['bulan'] == bulan)
 
-        print(filter)
-        if filter:
-            data_filtered = df.loc[filter]
+        if vervar != "0":
+            filters.append(df['vervar'] == vervar)
+
+        if karakteristik != "0":
+            filters.append(df['karakteristik'] == karakteristik)
+
+        if filters:
+            data_filtered = df[pd.concat(filters, axis=1).all(axis=1)]
         else:
             data_filtered = df
 
-        print(data_filtered)
-        plot = plot_view(data_filtered)
+
+        data_prediksi = predict(data_filtered)
+        # print(data_prediksi)
+        # print(data_filtered)
+        # plot = plot_view(data_filtered)
+
+        plot = plot_predict(data_prediksi)
 
         context = {
+            "tabel": data_prediksi.to_html(),
             "plot": plot
         }
 

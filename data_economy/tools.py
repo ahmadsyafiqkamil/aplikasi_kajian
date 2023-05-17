@@ -1,12 +1,8 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-from pathlib import Path
-from django.conf import settings
 import plotly.graph_objects as go
-import plotly.offline as opy
 import plotly.io as pio
-from plotly.offline import init_notebook_mode, iplot
 from statsmodels.tsa.api import ExponentialSmoothing
+# from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
 
 def json_to_pd(data_dict):
@@ -77,5 +73,189 @@ def plot_view(df):
     return fig_json
 
 
+def plot_coloumn(df):
+    fig = go.Figure()
+
+    # menambahkan data ke dalam plot
+    fig.add_trace(go.Scatter(x=df['tahun'], y=df['Data'], mode='lines'))
+
+    # menentukan layout plot
+    fig.update_layout(title='Seluruh Data', xaxis_title='Tahun', yaxis_title='Data')
+
+    tahun = df['tahun'].unique()
+    bulan = df['bulan'].unique()
+    vervar = df['vervar'].unique()
+    karakteristik = df['karakteristik'].unique()
+
+    button_layer_1_height = 1.08
+    fig.update_layout(
+        updatemenus=[
+            go.layout.Updatemenu(
+                buttons=[
+                    {
+                        'label': f"{t}",
+                        'method': 'update',
+                        'args': [
+                            {'x': [df.loc[(df['tahun'] == t)]['tahun']],
+                             'y': [df.loc[(df['tahun'] == t)]['data']],
+                             'name': f'Data {t}'
+                             },
+                            {'xaxis.title': 'Tahun', 'yaxis.title': 'Data'}
+                        ]
+                    } for t in tahun
+                ],
+                direction="down",
+                pad={"r": 10, "t": 10},
+                showactive=True,
+                x=0,
+                xanchor="left",
+                y=button_layer_1_height,
+                yanchor="top",
+                active=0
+            ),
+            go.layout.Updatemenu(
+                buttons=[
+                    {
+                        'label': f"{b}",
+                        'method': 'update',
+                        'args': [
+                            {'x': [df.loc[(df['bulan'] == b)]['tahun']],
+                             'y': [df.loc[(df['bulan'] == b)]['data']],
+                             'name': f'Data {b}'
+                             },
+                            {'xaxis.title': 'Tahun', 'yaxis.title': 'Data'}
+                        ]
+                    } for b in bulan
+                ],
+                direction="down",
+                pad={"r": 10, "t": 10},
+                showactive=True,
+                x=0.1,
+                xanchor="left",
+                y=button_layer_1_height,
+                yanchor="top",
+                active=0,
+
+            ),
+            go.layout.Updatemenu(
+                buttons=[
+                    {
+                        'label': f"{v}",
+                        'method': 'update',
+                        'args': [
+                            {'x': [df.loc[(df['vervar'] == v)]['tahun']],
+                             'y': [df.loc[(df['vervar'] == v)]['data']],
+                             'name': f'Data {v}'
+                             },
+                            {'xaxis.title': 'Tahun', 'yaxis.title': 'Data'}
+                        ]
+                    } for v in vervar
+                ],
+                direction="down",
+                pad={"r": 10, "t": 10},
+                showactive=True,
+                x=0.6,
+                xanchor="left",
+                y=button_layer_1_height,
+                yanchor="top",
+                active=0,
+            ),
+            go.layout.Updatemenu(
+                buttons=[
+                    {
+                        'label': f"{b}",
+                        'method': 'update',
+                        'args': [
+                            {'x': [df.loc[(df['karakteristik'] == b)]['tahun']],
+                             'y': [df.loc[(df['karakteristik'] == b)]['data']],
+                             'name': f'Data {b}'
+                             },
+                            {'xaxis.title': 'Tahun', 'yaxis.title': 'Data'}
+                        ]
+                    } for b in karakteristik
+                ],
+                direction="down",
+                pad={"r": 10, "t": 10},
+                showactive=True,
+                x=0.8,
+                xanchor="left",
+                y=button_layer_1_height,
+                yanchor="top",
+                active=0,
+            ),
+            go.layout.Updatemenu(
+                buttons=
+                [
+                    {
+                        'label': 'Seluruh Data',
+                        'method': 'update',
+                        'args': [
+                            {'x': [df['tahun']],
+                             'y': [df['data']],
+                             'name': 'Seluruh Data'
+                             },
+                            {'xaxis.title': 'Tahun', 'yaxis.title': 'Data'}
+                        ]
+                    }
+                ],
+                direction="down",
+                pad={"r": 10, "t": 10},
+                showactive=True,
+                x=0.4,
+                xanchor="left",
+                y=button_layer_1_height,
+                yanchor="top",
+                active=0
+            ),
+        ]
+    )
+
+    fig_json = pio.to_json(fig)
+    # plot_html = opy.plot(fig, auto_open=False, output_type='div')
+    # context = {'plot': plot_html}
+    return fig_json
+
+
 def predict(df):
-    pass
+
+
+    # data_baru = df.loc[:,["tahun","Data"]]
+    # data_baru.set_index('tahun')
+    # print(df)
+    df.set_index('tahun')
+
+
+    model = ExponentialSmoothing(df['Data'],  seasonal='add', seasonal_periods=2)
+
+    # Melakukan prediksi untuk 5 tahun ke depan
+    forecast = model.fit().forecast(steps=5)
+
+    # Mengonversi nilai tahun ke tipe data integer
+    last_year = int(df['tahun'].max())
+    tahun_prediksi = pd.RangeIndex(start=last_year + 1, stop=last_year + 6)
+    df_pred = pd.DataFrame({'tahun': tahun_prediksi, 'Prediksi': forecast.values})
+
+    # Menggabungkan data asli, prediksi, dan data sebelumnya
+    df_hasil = pd.concat([df, df_pred], axis=0)
+    df_reset = df_hasil.reset_index()
+    df_reset = df_reset.drop("index", axis=1)
+    # Menampilkan hasil prediksi dan plot
+    # print(forecast)
+    # print(df_reset)
+    return df_reset
+
+
+def plot_predict(df):
+    # print(df)
+    fig = go.Figure()
+
+    fig.update_layout(title='Hasil Prediksi', xaxis_title='Tahun', yaxis_title='Data')
+
+    # Menambahkan data prediksi
+    fig.add_trace(go.Scatter(x=df['tahun'], y=df['Prediksi'], mode='lines', name='Prediksi'))
+
+    # Menambahkan data asli
+    fig.add_trace(go.Scatter(x=df['tahun'], y=df['Data'], mode='lines', name='Data'))
+
+    fig_json = pio.to_json(fig)
+    return fig_json
