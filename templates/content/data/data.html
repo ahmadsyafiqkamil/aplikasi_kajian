@@ -20,7 +20,7 @@
                 <tr>
                     <th class="wd-20p">Label Data</th>
                     <th class="wd-20p">Data</th>
-{#                    <th class="wd-20p">Variabel</th>#}
+                    {#                    <th class="wd-20p">Variabel</th>#}
                     <th class="wd-25p">Aksi</th>
                 </tr>
                 </thead>
@@ -110,7 +110,7 @@
 
                 }
             $.post("/data_get_data_pd/", data, function (response) {
-                console.log(response)
+                {#console.log(response)#}
                 $('#json-container').empty();
                 const html = $.parseHTML(response.html);
                 const label = $("<h3>").text("Data Tabel:" + response.label);
@@ -122,7 +122,7 @@
                 $('#json-container').append(label);
                 $('#json-container').append(html);
                 {#$('#json-container').append(img);#}
-                console.log(response.plot)
+                {#console.log(response.plot)#}
                 var figure_data = JSON.parse(response.plot);
                 Plotly.newPlot('plotly-figure', figure_data.data, figure_data.layout);
             }, "json");
@@ -137,11 +137,11 @@
                     csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
 
                 }
-            $.post("/data_download_data/", data, function (response) {
-                console.log(response)
+            $.post("{% url 'data:download_data' %}", data, function (response) {
+                console.log("response")
                 var blob = new Blob([response], {type: "text/csv;charset=utf-8;"});
                 saveAs(blob, "Dataframe Pandas.csv");
-            }, "json");
+            });
 
         })
     </script>

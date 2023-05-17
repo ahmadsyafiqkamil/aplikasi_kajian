@@ -9,6 +9,7 @@ from .api import API
 from .serializers import *
 import json
 from .tools import *
+import logging
 
 
 # Create your views here.
@@ -274,6 +275,7 @@ def download_file(request):
                             turvar_id=turvar_id, turth_id=turth_id, vervar_id=vervar_id)
 
         dt = api.data_dinamis_transform_to_pd(data)
+        print(dt)
 
         # Set the filename and Content-Disposition header
         filename = f'{slugify("Dataframe Pandas")}.csv'
@@ -282,7 +284,7 @@ def download_file(request):
 
         # Write dataframe to response
         dt.to_csv(path_or_buf=response, index=True, encoding='utf-8')
-
+        print(response.items())
         return response
 
 
@@ -333,7 +335,7 @@ def download_data(request):
         data = AktifitasData.objects.get(id=id)
         data_dict = json.loads(data.data)
         df = json_to_pd(data_dict)
-        print(id, df)
+        print(df)
 
         filename = f'{slugify("Dataframe Pandas")}.csv'
         response = HttpResponse(content_type='text/csv')
@@ -341,6 +343,7 @@ def download_data(request):
 
         # Write dataframe to response
         df.to_csv(path_or_buf=response, index=True, encoding='utf-8')
+        print(response.items())
 
         return response
 
