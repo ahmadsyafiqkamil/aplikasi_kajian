@@ -216,3 +216,6 @@ PLOTLY_DASH = {
 
     "stateless_loader": "demo.scaffold.stateless_app_loader",
 }
+
+AUTH_PASSWORD_VALIDATORS = []
+ALLOWED_DOCUMENT_EXTENSIONS = ['.doc', '.docx', '.pdf', '.txt']

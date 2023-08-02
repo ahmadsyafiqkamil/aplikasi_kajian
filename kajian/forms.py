@@ -1,9 +1,12 @@
 # from django.forms import ModelForm, TextInput
 from django import forms
+
+from aplikasi_kajian import settings
 from .models import Kajian, ProgresKajian, KomenProgresKajian
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from django.forms import modelformset_factory
+from django.core.exceptions import ValidationError
 
 
 class KajianForm(forms.ModelForm):
@@ -26,6 +29,14 @@ class KajianForm(forms.ModelForm):
             'abstrak': forms.Textarea(attrs={'class': 'form-control', }),
             'file': forms.FileInput(),
         }
+
+    def clean_file(self):
+        file = self.cleaned_data['file']
+        if file:
+            file_extension = file.name.split('.')[-1].lower()
+            if file_extension not in settings.ALLOWED_DOCUMENT_EXTENSIONS:
+                raise ValidationError(_('File yang diupload harus berupa dokumen (doc, docx, pdf, txt).'))
+        return file
 
     def __init__(self, *args, **kwargs):
         super(KajianForm, self).__init__(*args, **kwargs)

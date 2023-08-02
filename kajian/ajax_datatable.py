@@ -37,6 +37,7 @@ class KajianAjaxView(AjaxDatatableView):
         grup = User.objects.values("groups").get(username=self.request.user)
         kajian_fungsi = self.model.objects.values("pj_kajian__profile__fungsi").get(id=row["pk"])
         kajian_satker = self.model.objects.values("pj_kajian__profile__satker").get(id=row["pk"])
+        print(kajian_satker)
         file = self.model.objects.get(id=row["pk"])
         if file.file:
             path_file = file.file.url
